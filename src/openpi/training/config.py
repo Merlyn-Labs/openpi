@@ -598,7 +598,6 @@ _CONFIGS = [
         data=LeRobotB1KDataConfig(
             repo_id="behavior-1k/B50",
             base_config=DataConfig(
-                local_files_only=True, 
                 prompt_from_task=True,
                 episodes_index=list(range(200))
             ),
