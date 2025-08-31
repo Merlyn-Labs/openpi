@@ -132,7 +132,7 @@ def create_behavior_dataset(data_config: _config.DataConfig, action_horizon: int
     
     dataset = BehaviorLeRobotDataset(
         repo_id=data_config.repo_id,
-        root="/home/svl/Documents/test",
+        root="/vision/group/behavior",
         tasks=["turning_on_radio"],
         modalities=["rgb"],
         local_only=True,

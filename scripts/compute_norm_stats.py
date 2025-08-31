@@ -113,7 +113,11 @@ def main(config_name: str, max_frames: int | None = None):
     if data_config.behavior_dataset:
         from omnigibson.learning.datas import BehaviorLerobotDatasetMetadata
         metadata = BehaviorLerobotDatasetMetadata(
-            repo_id=data_config.repo_id, root="/home/svl/Documents/test", modalities=[], cameras=[]
+            repo_id=data_config.repo_id, 
+            root="/vision/group/behavior", 
+            tasks=["turning_on_radio"],
+            modalities=[], 
+            cameras=[]
         )
         norm_stats = {"state": {}, "action": {}}
         for key in ["mean", "std", "q01", "q99"]:
