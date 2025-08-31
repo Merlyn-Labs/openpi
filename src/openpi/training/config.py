@@ -601,14 +601,15 @@ _CONFIGS = [
     # b1k configs
     TrainConfig(
         name="pi0_b1k",
-        project_name = "B1K",
+        exp_name="openpi",
+        project_name="B1K",
         model=pi0.Pi0Config(action_horizon=50, paligemma_variant="gemma_2b_lora"),
         data=LeRobotB1KDataConfig(
             repo_id="behavior-1k/2025-challenge-demos",
             base_config=DataConfig(
                 prompt_from_task=True,
                 episodes_index=list(range(190)),
-                behavior_dataset_root="~/behavior",
+                behavior_dataset_root="/vision/group/behavior/2025-challenge-demos",
             ),
         ),
         weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi0_base/params"),

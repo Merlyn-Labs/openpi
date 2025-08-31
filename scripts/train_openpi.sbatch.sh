@@ -24,7 +24,7 @@ echo "Current time: $(date)"
 echo "Running with args: $@"
 
 uv run scripts/train_val.py pi0_b1k \
-    --exp-name="openpi_$(date +%Y%m%d_%H%M%S)" \
+    --exp_name="openpi_$(date +%Y%m%d_%H%M%S)" \
     --overwrite \
     --batch_size=64 \
     --checkpoint_base_dir=checkpoints/ \
