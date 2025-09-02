@@ -622,7 +622,7 @@ _CONFIGS = [
         ema_decay=None,
         val_repo_id="behavior-1k/2025-challenge-demos",
         val_episodes_index=list(range(190, 200)),
-        num_workers=32,
+        num_workers=64,
     ),
     
     #

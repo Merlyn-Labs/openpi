@@ -3,9 +3,9 @@
 #SBATCH --account=viscam
 #SBATCH --partition=viscam
 #SBATCH --nodes=1
-#SBATCH --gres=gpu:h200:1
+#SBATCH --gres=gpu:h200:2
 #SBATCH --mem=750G
-#SBATCH --cpus-per-task=45
+#SBATCH --cpus-per-task=66
 #SBATCH --time=2-00:00:00
 #SBATCH --output=outputs/sc/train_openpi_%j.out
 #SBATCH --error=outputs/sc/train_openpi_%j.err
