@@ -140,6 +140,8 @@ def create_behavior_dataset(data_config: _config.DataConfig, action_horizon: int
             key: [t / 30.0 for t in range(action_horizon)] for key in data_config.action_sequence_keys
         },
         episodes=data_config.episodes_index,
+        chunk_streaming_using_keyframe=True,
+        shuffle=True,
     )
 
     if data_config.prompt_from_task:
