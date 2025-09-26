@@ -72,7 +72,7 @@ class B1kInputs(transforms.DataTransformFn):
         wrist_image_right = _parse_image(data["observation/wrist_image_right"])
 
         match self.model_type:
-            case _model.ModelType.PI0:
+            case _model.ModelType.PI0 | _model.ModelType.PI05:
                 names = ("base_0_rgb", "left_wrist_0_rgb", "right_wrist_0_rgb")
                 images = (base_image, wrist_image_left, wrist_image_right)
                 image_masks = (np.True_, np.True_, np.True_)
