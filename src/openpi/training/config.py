@@ -90,6 +90,13 @@ class DataConfig:
 
     # If true, will use the LeRobot dataset task to define the prompt.
     prompt_from_task: bool = False
+    # If true, will use on-disk skill annotations to define the prompt.
+    prompt_from_skill_annotations: bool = False
+    # Root directory that contains "annotations/..." (for LeRobot local/Behavior datasets).
+    # If None for Behavior datasets, it defaults to `behavior_dataset_root`.
+    skill_annotations_dir: str | None = None
+    # Candidate JSON keys to pull the annotation text from.
+    skill_annotation_keys: Sequence[str] = ("skill", "skill_name", "language_instruction", "annotation", "description")
 
     # Only used for RLDS data loader (ie currently only used for DROID).
     rlds_data_dir: str | None = None
@@ -700,7 +707,8 @@ _CONFIGS = [
         data=LeRobotB1KDataConfig(
             repo_id="behavior-1k/2025-challenge-demos",
             base_config=DataConfig(
-                prompt_from_task=True,
+                prompt_from_task=False,
+                prompt_from_skill_annotations=True,
                 episodes_index=list(range(190)),
                 behavior_dataset_root="/vision/group/behavior/2025-challenge-demos",
             ),
@@ -727,7 +735,8 @@ _CONFIGS = [
         data=LeRobotB1KDataConfig(
             repo_id="behavior-1k/2025-challenge-demos",
             base_config=DataConfig(
-                prompt_from_task=True,
+                prompt_from_task=False,
+                prompt_from_skill_annotations=True,
                 episodes_index=list(range(190)),
                 behavior_dataset_root="/vision/group/behavior/2025-challenge-demos",
             ),

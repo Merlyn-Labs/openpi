@@ -136,7 +136,7 @@ def create_behavior_dataset(data_config: _config.DataConfig, action_horizon: int
         root=data_config.behavior_dataset_root,
         tasks=["turning_on_radio"],
         modalities=["rgb"],
-        local_only=True,
+        local_only=False,
         delta_timestamps={
             key: [t / 30.0 for t in range(action_horizon)] for key in data_config.action_sequence_keys
         },
@@ -145,7 +145,10 @@ def create_behavior_dataset(data_config: _config.DataConfig, action_horizon: int
         shuffle=True,
     )
 
-    if data_config.prompt_from_task:
+    # Prefer skill annotations when requested; otherwise fall back to task->prompt mapping.
+    if data_config.prompt_from_skill_annotations:
+        dataset = TransformedDataset(dataset, [_transforms.PromptFromSkillAnnotations(dataset.meta.tasks)])
+    elif data_config.prompt_from_task:
         dataset = TransformedDataset(dataset, [_transforms.PromptFromLeRobotTask(dataset.meta.tasks)])
 
     return dataset

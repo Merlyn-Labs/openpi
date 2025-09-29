@@ -2,6 +2,8 @@ from collections.abc import Callable, Mapping, Sequence
 import dataclasses
 import re
 from typing import Protocol, TypeAlias, TypeVar, runtime_checkable
+import json
+from pathlib import Path
 
 import flax.traverse_util as traverse_util
 import jax
@@ -306,6 +308,17 @@ class ExtractFASTActions(DataTransformFn):
         }
 
 
+def get_prompt_from_task(data: int, tasks: dict[int, str]) -> str:
+    if "task_index" not in data:
+        raise ValueError('Cannot extract prompt without "task_index"')
+
+    task_index = int(data["task_index"])
+    if (prompt := tasks.get(task_index)) is None:
+        raise ValueError(f"{task_index=} not found in task mapping: {tasks}")
+
+    return prompt
+
+
 @dataclasses.dataclass(frozen=True)
 class PromptFromLeRobotTask(DataTransformFn):
     """Extracts a prompt from the current LeRobot dataset task."""
@@ -314,12 +327,35 @@ class PromptFromLeRobotTask(DataTransformFn):
     tasks: dict[int, str]
 
     def __call__(self, data: DataDict) -> DataDict:
-        if "task_index" not in data:
-            raise ValueError('Cannot extract prompt without "task_index"')
+        return {**data, "prompt": get_prompt_from_task(data, self.tasks)}
 
-        task_index = int(data["task_index"])
-        if (prompt := self.tasks.get(task_index)) is None:
-            raise ValueError(f"{task_index=} not found in task mapping: {self.tasks}")
+
+@dataclasses.dataclass(frozen=True)
+class PromptFromSkillAnnotations(DataTransformFn):
+    """Extracts a prompt from the current LeRobot dataset task based on skill annotations."""
+
+    # Contains the LeRobot dataset tasks (dataset.meta.tasks).
+    tasks: dict[int, str]
+
+    def __call__(self, data: DataDict) -> DataDict:
+        if "skill_prompts" not in data:
+            raise ValueError('Cannot extract skill prompt without "skill_prompts"')
+
+        frame_idx = int(data["timestamp"] * 30)
+        skill_prompts = data["skill_prompts"]
+
+        prompt_idx = None
+        for idx, skill in enumerate(skill_prompts):
+            start, end = skill["frame_duration"]
+            if start <= frame_idx < end:
+                prompt_idx = idx
+                break
+
+        prompt = None
+        if prompt_idx is None:
+            prompt = get_prompt_from_task(data, self.tasks)
+        else:
+            prompt = skill_prompts[prompt_idx]["prompt"]
 
         return {**data, "prompt": prompt}
 
