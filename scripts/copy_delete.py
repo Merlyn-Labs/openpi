@@ -2,9 +2,10 @@ import subprocess
 import shutil
 from pathlib import Path
 import time
+import os
 
 ONE_HOUR = 3600
-base_local = "outputs/checkpoints/pi0_b1k/openpi_20250929_035039/".strip()
+base_local = os.path.normpath("outputs/checkpoints/pi0_b1k/openpi_20250929_035039/")
 base_s3 = f"s3://behavior-challenge/{base_local}"
 idx = 0
 
