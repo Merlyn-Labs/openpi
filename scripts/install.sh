@@ -1,7 +1,7 @@
 #!/bin/bash
 
 GIT_LFS_SKIP_SMUDGE=1 uv sync
-GIT_LFS_SKIP_SMUDGE=1 uv pip install -e 
+GIT_LFS_SKIP_SMUDGE=1 uv pip install -e .
 
 source .venv/bin/activate
 
