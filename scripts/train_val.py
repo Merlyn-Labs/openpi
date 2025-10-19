@@ -121,7 +121,7 @@ def _create_validation_data_loader(
         sharding=replicated_sharding,
         shuffle=False,
         num_batches=val_config.val_num_batches,
-        num_workers=0,
+        num_workers=0,  # this is 0 to prevent deadlock in multi-gpu setups and only runs every 5k steps anyways
         seed=val_config.seed,
     )
 
