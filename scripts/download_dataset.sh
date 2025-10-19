@@ -1,9 +1,11 @@
 #!/bin/bash
 
-TASK_NAMES=("task-0047")
+TASK_NAMES=("task-0000" "task-0001" "task-0023" "task-0035" "task-0047")
+
+# for DIR in annotations data skill_prompts videos meta/episodes; do
 
 for TASK_NAME in "${TASK_NAMES[@]}"; do
-    for DIR in annotations data skill_prompts videos meta/episodes; do
+    for DIR in skill_prompts; do
         echo "Syncing ${DIR} for ${TASK_NAME}..."
         aws s3 sync \
             s3://behavior-challenge/vision/group/behavior/2025-challenge-demos/${DIR}/${TASK_NAME}/ \

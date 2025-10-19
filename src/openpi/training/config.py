@@ -819,6 +819,12 @@ _CONFIGS = [
         freeze_filter=pi0_config.Pi0Config(
             pi05=True, action_horizon=50, paligemma_variant="gemma_2b_lora"
         ).get_freeze_filter(),
+        lr_schedule=_optimizer.CosineDecaySchedule(
+            warmup_steps=2_000,
+            peak_lr=3.5e-5,
+            decay_steps=18_000,
+            decay_lr=3.5e-6,
+        ),
         ema_decay=None,
         val_log_interval=5000,
         val_repo_id="behavior-1k/2025-challenge-demos",
