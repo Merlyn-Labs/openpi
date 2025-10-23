@@ -801,11 +801,25 @@ _CONFIGS = [
             repo_id="behavior-1k/2025-challenge-demos",
             base_config=DataConfig(
                 tasks=[
-                    "turning_on_radio",
-                    "picking_up_trash",
-                    "boxing_books_up_for_storage",
-                    "attach_a_camera_to_a_tripod",
-                    "freeze_pies",
+                    "turning_on_radio",  # 0
+                    "picking_up_trash",  # 1
+                    "setting_mousetraps",  # 5
+                    "bringing_in_wood",  # 15
+                    "moving_boxes_to_storage",  # 16
+                    "bringing_water",  # 17
+                    "tidying_bedroom",  # 18
+                    "putting_shoes_on_rack",  # 22
+                    "boxing_books_up_for_storage",  # 23
+                    "setting_the_fire",  # 30
+                    "hanging_pictures",  # 34
+                    "attach_a_camera_to_a_tripod",  # 35
+                    "clean_a_trumpet",  # 37
+                    "spraying_for_bugs",  # 38
+                    "spraying_fruit_trees",  # 39
+                    "make_microwave_popcorn",  # 40
+                    "cook_hot_dogs",  # 45
+                    "cook_bacon",  # 46
+                    "freeze_pies",  # 47
                 ],
                 prompt_from_task=False,
                 prompt_from_skill_annotations=True,
@@ -817,7 +831,7 @@ _CONFIGS = [
                     ((7, 8, 9, 10, 11, 12, 13, 21), 0.3),  # left arm + gripper position
                     ((14, 15, 16, 17, 18, 19, 20, 22), 0.3),  # right arm + gripper position
                 ],
-                episodes_index=list(range(90)),
+                episodes_index=list(range(75)),
                 behavior_dataset_root="/vision/group/behavior/2025-challenge-demos",
             ),
         ),
