@@ -27,10 +27,10 @@ class PaligemmaTokenizer:
             # Mask out the state dimensions that are not visible with an asterisk
             if proprio_visibility_mask is None:
                 proprio_visibility_mask = np.ones_like(state)
-            state_str = " ".join(map(
-                lambda x, is_visible: str(x) if is_visible else "*",
-                zip(discretized_state, proprio_visibility_mask.astype(bool))
-            ))
+            state_str = " ".join(
+                str(x) if is_x_visible else "*" 
+                for x, is_x_visible in zip(discretized_state, proprio_visibility_mask.astype(bool))
+            )
             full_prompt = f"Task: {cleaned_text}, State: {state_str};\nAction: "
             tokens = self._tokenizer.encode(full_prompt, add_bos=True)
         else:
