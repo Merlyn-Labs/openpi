@@ -503,7 +503,9 @@ class TorchDataLoader:
             worker_init_fn=_worker_init_fn,
             drop_last=True,
             generator=generator,
-            prefetch_factor=10 if num_workers > 0 else None,  # Prefetch more batches to avoid stalls every 13-15 steps
+            prefetch_factor=2 if num_workers > 0 else None,  # Prefetch more batches to avoid stalls every 13-15 steps
+            pin_memory=True,
+            timeout=600,  # 10 minutes
         )
 
     @property
@@ -542,6 +544,25 @@ def _worker_init_fn(worker_id: int) -> None:
     # means that this approach will not work for selecting the backend.
     os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
     os.environ["XLA_PYTHON_CLIENT_ALLOCATOR"] = "platform"
+
+    # Initialize each worker with proper error handling
+    import logging
+    import sys
+
+    # Set up logging for this worker
+    logging.basicConfig(
+        level=logging.INFO,
+        format=f'[Worker {worker_id}] %(message)s',
+        handlers=[logging.FileHandler(f'/tmp/worker_{worker_id}.log')]
+    )
+
+    # Handle worker crashes
+    def exception_handler(exc_type, exc_value, exc_traceback):
+        logging.error("Worker exception:", exc_info=(exc_type, exc_value, exc_traceback))
+
+    sys.excepthook = exception_handler
+
+    logging.info(f"Worker {worker_id} initialized")
 
 
 class RLDSDataLoader:

@@ -852,7 +852,7 @@ _CONFIGS = [
         val_episodes_index=list(range(190, 200)),
         assets_base_dir="./outputs/assets",
         checkpoint_base_dir="./outputs/checkpoints",
-        num_workers=min(32, os.cpu_count() - 2),
+        num_workers=min(64, os.cpu_count() - 2),
     ),
 
     #
