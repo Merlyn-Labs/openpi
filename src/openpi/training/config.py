@@ -803,37 +803,53 @@ _CONFIGS = [
                 tasks=[
                     "turning_on_radio",  # 0
                     "picking_up_trash",  # 1
+                    "cleaning_up_plates_and_food",  # 3
+                    "can_meat",  # 4
                     "setting_mousetraps",  # 5
+                    "picking_up_toys",  # 7
+                    "putting_dishes_away_after_cleaning",  # 11
+                    "loading_the_car",  # 13
                     "bringing_in_wood",  # 15
                     "moving_boxes_to_storage",  # 16
                     "bringing_water",  # 17
                     "tidying_bedroom",  # 18
+                    "sorting_vegetables",  # 20
                     "putting_shoes_on_rack",  # 22
                     "boxing_books_up_for_storage",  # 23
+                    "clearing_food_from_table_into_fridge",  # 25
+                    "sorting_household_items",  # 27
                     "setting_the_fire",  # 30
+                    "wash_dog_toys",  # 33
                     "hanging_pictures",  # 34
                     "attach_a_camera_to_a_tripod",  # 35
                     "clean_a_trumpet",  # 37
                     "spraying_for_bugs",  # 38
                     "spraying_fruit_trees",  # 39
                     "make_microwave_popcorn",  # 40
+                    "chop_an_onion",  # 42
+                    "slicing_vegetables",  # 43
                     "cook_hot_dogs",  # 45
                     "cook_bacon",  # 46
                     "freeze_pies",  # 47
+                    "canning_food",  # 48
+                    "make_pizza",  # 49
                 ],
                 prompt_from_task=False,
                 prompt_from_skill_annotations=True,
-                prompt_from_skill_annotations_use_base_prompt_pct=0.5,
+                prompt_from_skill_annotations_use_base_prompt_pct=0.2,
                 proprio_dropout_dropout_whole_proprio_pct=0.3,
                 proprio_dropout_proprio_groups=[
                     ((0, 1, 2), 0.2),  # base velocity
-                    ((3, 4, 5, 6), 0.2),  # trunk position
-                    # ((7, 8, 9, 10, 11, 12, 13, 21), 0.4),  # left arm + gripper position
-                    # ((14, 15, 16, 17, 18, 19, 20, 22), 0.4),  # right arm + gripper position
-                    ((7, 8, 9, 10, 11, 12, 13, 21, 14, 15, 16, 17, 18, 19, 20, 22), 0.75),  # boths arm + grippers positions
+                    ((3, 4, 5, 6), 0.2),  # trunk positions
+                    ((7, 8, 9), 0.2),  # left shoulder positions
+                    ((10, 11), 0.2),  # left upper arm positions
+                    ((12, 13, 21), 0.2),  # left forearm and gripper position
+                    ((14, 15, 16), 0.2),  # right shoulder positions
+                    ((17, 18), 0.2),  # right upper arm positions
+                    ((19, 20, 22), 0.2),  # right forearm and gripper position
                 ],
                 episodes_index=list(range(75)),
-                behavior_dataset_root="/vision/group/behavior/2025-challenge-demos",
+                behavior_dataset_root="/scratch/vision/group/behavior/2025-challenge-demos",
             ),
         ),
         weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),

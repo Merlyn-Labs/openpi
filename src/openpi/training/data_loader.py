@@ -314,7 +314,7 @@ def create_behavior_data_loader(
     data_config = config.data.create(config.assets_dirs, config.model)
     dataset = create_behavior_dataset(data_config, action_horizon=config.model.action_horizon)
     dataset = transform_dataset(dataset, data_config, skip_norm_stats=skip_norm_stats)
-
+    print(f"jax.process_count()={jax.process_count()}")
     data_loader = TorchDataLoader(
         dataset,
         local_batch_size=config.batch_size // jax.process_count(),
@@ -512,12 +512,32 @@ class TorchDataLoader:
     def torch_loader(self) -> torch.utils.data.DataLoader:
         return self._data_loader
 
+    def shutdown(self):
+        """Explicitly shutdown worker processes to prevent memory leaks."""
+        if hasattr(self._data_loader, '_iterator') and self._data_loader._iterator is not None:
+            self._data_loader._iterator._shutdown_workers()
+            self._data_loader._iterator = None
+
+    def __del__(self):
+        """Cleanup worker processes when the data loader is deleted."""
+        try:
+            self.shutdown()
+        except Exception:
+            pass  # Ignore errors during cleanup
+
     def __iter__(self):
         num_items = 0
+        data_iter = None
         while True:
+            # Clean up previous iterator before creating a new one
+            if data_iter is not None:
+                del data_iter
             data_iter = iter(self._data_loader)
             while True:
                 if self._num_batches is not None and num_items >= self._num_batches:
+                    # Clean up iterator before returning
+                    if data_iter is not None:
+                        del data_iter
                     return
                 try:
                     batch = next(data_iter)
@@ -616,6 +636,18 @@ class DataLoaderImpl(DataLoader):
 
     def data_config(self) -> _config.DataConfig:
         return self._data_config
+
+    def shutdown(self):
+        """Shutdown the underlying data loader to free resources."""
+        if hasattr(self._data_loader, 'shutdown'):
+            self._data_loader.shutdown()
+
+    def __del__(self):
+        """Cleanup when the data loader is deleted."""
+        try:
+            self.shutdown()
+        except Exception:
+            pass  # Ignore errors during cleanup
 
     def __iter__(self):
         for batch in self._data_loader:

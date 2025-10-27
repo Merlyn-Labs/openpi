@@ -67,16 +67,19 @@ def _delta_action_weights(actions, *, alpha=0.2, beta=1.0, cap=0.5):
     """
     actions: [B, H, D] absolute commands
     returns: w in [B, H] with mean ≈ 1
+
+    Calculates weights based on the magnitude of the action delta,
+    but only considers DOF indices 7 onwards (e.g., arm movements).
     """
-    da = actions[:, 1:, :] - actions[:, :-1, :]
+    arm_actions = actions[..., 7:]                                 # only DOF 7+ (axis -1)
+    da = arm_actions[:, 1:, :] - arm_actions[:, :-1, :]
+    da_mag = jnp.linalg.norm(da, axis=-1)                          # [B, H-1]
+    da_mag = jnp.pad(da_mag, ((0, 0), (1, 0)))                     # align to [B, H]; first step has no Δ → 0
 
-    da_mag = jnp.linalg.norm(da, axis=-1)                 # [B, H-1]
-    da_mag = jnp.pad(da_mag, ((0, 0), (1, 0)))            # align to [B, H]; first step has no Δ → 0
-
-    w = alpha + beta * jnp.minimum(da_mag, cap)           # gentle slope + cap
-    w = jnp.clip(w, 0.1, 3.0)                             # guardrails
-    w = w / (jnp.mean(w) + 1e-8)                          # mean ≈ 1 per batch
-    return w                                              # [B, H]
+    w = alpha + beta * jnp.minimum(da_mag, cap)                    # gentle slope + cap
+    w = jnp.clip(w, 0.1, 3.0)                                      # guardrails
+    w = w / (jnp.mean(w) + 1e-8)                                   # mean ≈ 1 per batch
+    return w                                                       # [B, H]
 
 
 class Pi0(_model.BaseModel):

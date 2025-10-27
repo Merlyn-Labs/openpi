@@ -164,13 +164,14 @@ def _compute_validation_losses(
         out_shardings=replicated_sharding,
     )
 
-    val_iter = iter(val_loader)
+    val_iter = None
     losses = []
     # Use a separate RNG for validation to avoid interference with training RNG,
     # the specific seed offset is arbitrary.
     val_rng = jax.random.key(config.seed + 1000)
 
     try:
+        val_iter = iter(val_loader)
         for batch_idx in range(config.val_num_batches):
             try:
                 batch = next(val_iter)
@@ -186,7 +187,8 @@ def _compute_validation_losses(
                 continue
     finally:
         # Clean up the iterator to prevent resource leaks
-        del val_iter
+        if val_iter is not None:
+            del val_iter
 
     if not losses:
         return None
@@ -236,11 +238,8 @@ def compute_validation_loss(
     finally:
         # Explicitly clean up the validation data loader to prevent resource leaks in multi-GPU setups
         # This is critical to avoid hanging after ~5000 steps when validation runs
-        if hasattr(val_loader, '_torch_data_loader'):
-            torch_data_loader = val_loader._torch_data_loader
-            if hasattr(torch_data_loader, '_data_loader'):
-                # Delete any references to prevent hanging iterators
-                del torch_data_loader._data_loader
+        if hasattr(val_loader, 'shutdown'):
+            val_loader.shutdown()
         del val_loader
         # Force garbage collection to ensure all resources are released
         gc.collect()
