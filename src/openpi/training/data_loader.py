@@ -314,7 +314,7 @@ def create_behavior_data_loader(
     data_config = config.data.create(config.assets_dirs, config.model)
     dataset = create_behavior_dataset(data_config, action_horizon=config.model.action_horizon)
     dataset = transform_dataset(dataset, data_config, skip_norm_stats=skip_norm_stats)
-    print(f"jax.process_count()={jax.process_count()}")
+
     data_loader = TorchDataLoader(
         dataset,
         local_batch_size=config.batch_size // jax.process_count(),
@@ -324,7 +324,7 @@ def create_behavior_data_loader(
         num_workers=config.num_workers,
         seed=config.seed,
     )
-    
+
     return DataLoaderImpl(data_config, data_loader)
 
 
