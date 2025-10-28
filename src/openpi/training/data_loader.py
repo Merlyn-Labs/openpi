@@ -315,6 +315,10 @@ def create_behavior_data_loader(
     dataset = create_behavior_dataset(data_config, action_horizon=config.model.action_horizon)
     dataset = transform_dataset(dataset, data_config, skip_norm_stats=skip_norm_stats)
 
+    # IMPORTANT: BehaviorLeRobotDataset imports OmniGibson which has global state and signal handlers.
+    # We disable the signal handlers via OMNIGIBSON_NO_SIGNALS env var in worker_init_fn.
+    # If you still experience deadlocks, set num_workers=0 in your config.
+
     data_loader = TorchDataLoader(
         dataset,
         local_batch_size=config.batch_size // jax.process_count(),
@@ -491,6 +495,10 @@ class TorchDataLoader:
 
         generator = torch.Generator()
         generator.manual_seed(seed)
+
+        # Disable persistent_workers to prevent deadlocks with resource-intensive datasets
+        # like OmniGibson/BEHAVIOR. Workers will be restarted each epoch, preventing
+        # resource accumulation and worker hangs.
         self._data_loader = torch.utils.data.DataLoader(
             typing.cast(torch.utils.data.Dataset, dataset),
             batch_size=local_batch_size,
@@ -498,14 +506,14 @@ class TorchDataLoader:
             sampler=sampler,
             num_workers=num_workers,
             multiprocessing_context=mp_context,
-            persistent_workers=num_workers > 0,
+            persistent_workers=False,  # Disabled to prevent deadlocks
             collate_fn=_collate_fn,
             worker_init_fn=_worker_init_fn,
             drop_last=True,
             generator=generator,
             prefetch_factor=8 if num_workers > 0 else None,  # Prefetch more batches to avoid stalls every 13-15 steps
             pin_memory=True,
-            timeout=90,  # 1.5 minutes
+            timeout=300,  # 5 minutes - increased for resource-intensive workloads
         )
 
     @property
@@ -564,6 +572,10 @@ def _worker_init_fn(worker_id: int) -> None:
     # means that this approach will not work for selecting the backend.
     os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
     os.environ["XLA_PYTHON_CLIENT_ALLOCATOR"] = "platform"
+
+    # Disable OmniGibson signal handlers to prevent multiprocessing deadlocks
+    # This must be set BEFORE omnigibson is imported in the worker
+    os.environ["OMNIGIBSON_NO_SIGNALS"] = "1"
 
     # Initialize each worker with proper error handling
     import logging
