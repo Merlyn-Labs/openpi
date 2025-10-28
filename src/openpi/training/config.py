@@ -848,7 +848,7 @@ _CONFIGS = [
                     ((17, 18), 0.2),  # right upper arm positions
                     ((19, 20, 22), 0.2),  # right forearm and gripper position
                 ],
-                episodes_index=list(range(25)) + list(range(60, 75)),  # we have 0-75 on disk and we trained on some portion of 20-60 but training crashed, so now we train on 0-25 and 60-75, excluding episodes 20-60, some of which we have already trained on.
+                episodes_index=(list(range(25)) + list(range(60, 75))),  # we have 0-75 on disk and we trained on some portion of 20-60 but training crashed, so now we train on 0-25 and 60-75, excluding episodes 20-60, some of which we have already trained on.
                 behavior_dataset_root="/scratch/vision/group/behavior/2025-challenge-demos",
             ),
         ),
