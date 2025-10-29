@@ -8,9 +8,8 @@ from openai import OpenAI
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 # Base directories (without task-xxxx)
-# annotations_base_dir = "/vision/group/behavior/2025-challenge-demos/annotations/"
-# prompt_base_dir = "/vision/group/behavior/2025-challenge-demos/skill_prompts/"
-annotations_base_dir = "/root/.cache/huggingface/hub/datasets--behavior-1k--2025-challenge-demos/snapshots/48908ec3c6e64cbb696d7cbfa023568be2a8abcf/annotations/"
+annotations_base_dir = "/scratch/vision/group/behavior/2025-challenge-demos/annotations/"
+# annotations_base_dir = "/root/.cache/huggingface/hub/datasets--behavior-1k--2025-challenge-demos/snapshots/48908ec3c6e64cbb696d7cbfa023568be2a8abcf/annotations/"
 prompt_base_dir = annotations_base_dir.replace("annotations/", "skill_prompts/")
 
 action_keys_to_ignore = ["skill_idx", "skill_id", "frame_duration", "mp_ef"]

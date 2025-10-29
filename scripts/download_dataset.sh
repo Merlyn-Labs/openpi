@@ -29,9 +29,11 @@ for TASK_NAME in "${TASK_NAMES[@]}"; do
         echo "Syncing ${DIR} for ${TASK_NAME}..."
         aws s3 sync \
             s3://behavior-challenge/vision/group/behavior/2025-challenge-demos/${DIR}/${TASK_NAME}/ \
-            /vision/group/behavior/2025-challenge-demos/${DIR}/${TASK_NAME}/
+            /scratch/vision/group/behavior/2025-challenge-demos/${DIR}/${TASK_NAME}/
     done
 done
+
+aws s3 sync s3://behavior-challenge/vision/group/behavior/2025-challenge-demos/meta/diverse_prompts.jsonl /scratch/vision/group/behavior/2025-challenge-demos/meta/diverse_prompts.jsonl
 
 # # This is done separately because it is not task-specific. In fact, it is redundant except for the
 # # first time that any task is downloaded to a local machine.

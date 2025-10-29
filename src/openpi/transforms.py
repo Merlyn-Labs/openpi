@@ -309,7 +309,10 @@ class ExtractFASTActions(DataTransformFn):
         }
 
 
-def get_prompt_from_task(data: int, tasks: dict[int, str]) -> str:
+def get_prompt_from_task_or_data(data: int, tasks: dict[int, str], prefer_prompt_from_data: bool = False) -> str:
+    if "prompt" in data and prefer_prompt_from_data:
+        return data["prompt"]
+
     if "task_index" not in data:
         raise ValueError('Cannot extract prompt without "task_index"')
 
@@ -326,9 +329,10 @@ class PromptFromLeRobotTask(DataTransformFn):
 
     # Contains the LeRobot dataset tasks (dataset.meta.tasks).
     tasks: dict[int, str]
+    prefer_prompt_from_data: bool = False
 
     def __call__(self, data: DataDict) -> DataDict:
-        return {**data, "prompt": get_prompt_from_task(data, self.tasks)}
+        return {**data, "prompt": get_prompt_from_task_or_data(data, self.tasks, self.prefer_prompt_from_data)}
 
 
 @dataclasses.dataclass(frozen=True)
@@ -338,15 +342,16 @@ class PromptFromSkillAnnotations(DataTransformFn):
     # Contains the LeRobot dataset tasks (dataset.meta.tasks).
     tasks: dict[int, str]
     use_base_prompt_pct: float = 0.0
+    prefer_prompt_from_data: bool = False
 
     def __call__(self, data: DataDict) -> DataDict:
         # If no skill prompts are available, use the base prompt.
         if "skill_prompts" not in data:
-            return {**data, "prompt": get_prompt_from_task(data, self.tasks)}
+            return {**data, "prompt": get_prompt_from_task_or_data(data, self.tasks, self.prefer_prompt_from_data)}
 
         # Randomly use the base prompt with a given probability
         if random.random() < self.use_base_prompt_pct:
-            return {**data, "prompt": get_prompt_from_task(data, self.tasks)}
+            return {**data, "prompt": get_prompt_from_task_or_data(data, self.tasks, self.prefer_prompt_from_data)}
 
         frame_idx = int(data["timestamp"] * 30)
         skill_prompts = data["skill_prompts"]
@@ -362,7 +367,7 @@ class PromptFromSkillAnnotations(DataTransformFn):
 
         # If no skill annotated prompt is found, use the base prompt.
         if prompt_idx is None:
-            return {**data, "prompt": get_prompt_from_task(data, self.tasks)}
+            return {**data, "prompt": get_prompt_from_task_or_data(data, self.tasks, self.prefer_prompt_from_data)}
         else:
             return {**data, "prompt": skill_prompts[prompt_idx]["prompt"]}
 

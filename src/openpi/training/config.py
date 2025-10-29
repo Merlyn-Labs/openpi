@@ -91,6 +91,8 @@ class DataConfig:
     # LeRobot dataset is using different keys to represent the action.
     action_sequence_keys: Sequence[str] = ("actions",)
 
+    # If true, will prefer the prompt from the data if it is present.
+    prefer_prompt_from_data: bool = False
     # If true, will use the LeRobot dataset task to define the prompt.
     prompt_from_task: bool = False
     # If true, will use on-disk skill annotations to define the prompt.
@@ -120,6 +122,9 @@ class DataConfig:
 
     # episodes index to use for training 
     episodes_index : List[int] | None = None
+
+    # Skill descriptions to ban from the prompt
+    banned_skill_descriptions: List[str] | None = None
 
 class GroupFactory(Protocol):
     def __call__(self, model_config: _model.BaseModelConfig) -> _transforms.Group:
@@ -807,7 +812,7 @@ _CONFIGS = [
                     "can_meat",  # 4
                     "setting_mousetraps",  # 5
                     "picking_up_toys",  # 7
-                    "putting_dishes_away_after_cleaning",  # 11
+                    # "putting_dishes_away_after_cleaning",  # 11, but missing annotations
                     "loading_the_car",  # 13
                     "bringing_in_wood",  # 15
                     "moving_boxes_to_storage",  # 16
@@ -826,6 +831,7 @@ _CONFIGS = [
                     "spraying_for_bugs",  # 38
                     "spraying_fruit_trees",  # 39
                     "make_microwave_popcorn",  # 40
+                    # 41 is also missing annotations, so not included
                     "chop_an_onion",  # 42
                     "slicing_vegetables",  # 43
                     "cook_hot_dogs",  # 45
@@ -848,8 +854,10 @@ _CONFIGS = [
                     ((17, 18), 0.2),  # right upper arm positions
                     ((19, 20, 22), 0.2),  # right forearm and gripper position
                 ],
-                episodes_index=(list(range(25)) + list(range(60, 75))),  # we have 0-75 on disk and we trained on some portion of 20-60 but training crashed, so now we train on 0-25 and 60-75, excluding episodes 20-60, some of which we have already trained on.
+                episodes_index=list(range(75)),
                 behavior_dataset_root="/scratch/vision/group/behavior/2025-challenge-demos",
+                banned_skill_descriptions=["move to"],
+                prefer_prompt_from_data=True,
             ),
         ),
         weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
