@@ -32,7 +32,7 @@ def preprocess_actions(actions):
     reraise=True,
 )
 def generate_prompt_from_action(task_name, actions, existing_prompts):
-    """Generate a prompt from an action JSON via gpt-5-nano, with retry logic."""
+    """Generate a prompt from an action JSON via gpt-5, with retry logic."""
     system_prompt = """You are an expert in prompt engineering for robotics and Vision-Language-Action (VLA) models. Your task is to convert a structured JSON skill annotation from the Stanford BEHAVIOR dataset into a high-quality, concise natural-language instruction suitable for fine-tuning a Vision-Language-Action (VLA) model.
 
 The JSON represents a single robotic skill and typically includes:

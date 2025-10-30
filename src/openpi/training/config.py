@@ -880,7 +880,10 @@ _CONFIGS = [
                 ],
                 episodes_index=list(range(75, 130)),
                 behavior_dataset_root="/scratch/vision/group/behavior/2025-challenge-demos",
-                banned_skill_descriptions=["move to"],
+                banned_skill_descriptions=[
+                    "move to",
+                    # "pick up from",
+                ],
                 prefer_prompt_from_data=True,
             ),
         ),

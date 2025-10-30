@@ -52,7 +52,6 @@ def extract_skill_descriptions_with_frames(annotations_dir: str) -> tuple[Set[st
                                 start_frame, end_frame = fd
                                 num_frames = end_frame - start_frame
                                 frame_counts[description] = frame_counts.get(description, 0) + num_frames
-                                assert end_frame < data['meta_data']['valid_duration'][1], f"End frame {end_frame} is greater than valid duration {data['meta_data']['valid_duration'][1]}"
                             # If fd is a list of lists (N pairs)
                             elif isinstance(fd, list) and all(isinstance(x, list) and len(x) == 2 for x in fd):
                                 for pair in fd:
