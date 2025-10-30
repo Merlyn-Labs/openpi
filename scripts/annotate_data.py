@@ -16,7 +16,7 @@ action_keys_to_ignore = ["skill_idx", "skill_id", "frame_duration", "mp_ef"]
 existing_prompts = []
 
 client = OpenAI()
-model = "gpt-5-nano"
+model = "gpt-5"
 
 def preprocess_actions(actions):
     """Preprocess the actions to remove the skill_idx, skill_id, and mp_ef fields."""
