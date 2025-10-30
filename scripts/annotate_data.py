@@ -166,7 +166,8 @@ def process_file(annotations_dir, prompt_out_dir, file, idx, total_files, existi
 
 # Find all task-xxxx directories in the annotations base dir
 task_dirs = sorted(
-    [d for d in os.listdir(annotations_base_dir) if re.match(r"task-\d{4}", d)]
+    [d for d in os.listdir(annotations_base_dir) if re.match(r"task-\d{4}", d)],
+    reverse=True
 )
 
 for task_dir in task_dirs:
@@ -179,6 +180,6 @@ for task_dir in task_dirs:
 
     print(f"Processing {total_files} files in {annotations_dir}...")
 
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=32) as executor:
         for idx, file in enumerate(files):
             executor.submit(process_file, annotations_dir, prompt_out_dir, file, idx, total_files, existing_prompts)
