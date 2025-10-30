@@ -816,53 +816,54 @@ _CONFIGS = [
                 "padding": (23, 32),        # padding dimensions
             },
             group_weights={
-                "base": 1.0,       # Reduce base importance
-                "trunk": 2.0,
-                "left_arm": 3.0,   # 10x more than base!
-                "left_gripper": 2.5,
-                "right_arm": 3.0,
-                "right_gripper": 2.5,
+                "base": 1.0,
+                "trunk": 2.5,
+                "left_arm": 6.0,
+                "left_gripper": 4.0,
+                "right_arm": 6.0,
+                "right_gripper": 4.0,
                 "padding": 0.0,
             },
         ),
         data=LeRobotB1KDataConfig(
             repo_id="behavior-1k/2025-challenge-demos",
             base_config=DataConfig(
-                tasks=[
-                    "turning_on_radio",  # 0
-                    "picking_up_trash",  # 1
-                    "cleaning_up_plates_and_food",  # 3
-                    "can_meat",  # 4
-                    "setting_mousetraps",  # 5
-                    "picking_up_toys",  # 7
-                    # "putting_dishes_away_after_cleaning",  # 11, but missing annotations
-                    "loading_the_car",  # 13
-                    "bringing_in_wood",  # 15
-                    "moving_boxes_to_storage",  # 16
-                    "bringing_water",  # 17
-                    "tidying_bedroom",  # 18
-                    "sorting_vegetables",  # 20
-                    "putting_shoes_on_rack",  # 22
-                    "boxing_books_up_for_storage",  # 23
-                    "clearing_food_from_table_into_fridge",  # 25
-                    "sorting_household_items",  # 27
-                    "setting_the_fire",  # 30
-                    "wash_dog_toys",  # 33
-                    "hanging_pictures",  # 34
-                    "attach_a_camera_to_a_tripod",  # 35
-                    "clean_a_trumpet",  # 37
-                    "spraying_for_bugs",  # 38
-                    "spraying_fruit_trees",  # 39
-                    "make_microwave_popcorn",  # 40
-                    # 41 is also missing annotations, so not included
-                    "chop_an_onion",  # 42
-                    "slicing_vegetables",  # 43
-                    "cook_hot_dogs",  # 45
-                    "cook_bacon",  # 46
-                    "freeze_pies",  # 47
-                    "canning_food",  # 48
-                    "make_pizza",  # 49
-                ],
+                tasks=None,  # use all tasks
+                # tasks=[
+                #     "turning_on_radio",  # 0
+                #     "picking_up_trash",  # 1
+                #     "cleaning_up_plates_and_food",  # 3
+                #     "can_meat",  # 4
+                #     "setting_mousetraps",  # 5
+                #     "picking_up_toys",  # 7
+                #     # "putting_dishes_away_after_cleaning",  # 11, but missing annotations
+                #     "loading_the_car",  # 13
+                #     "bringing_in_wood",  # 15
+                #     "moving_boxes_to_storage",  # 16
+                #     "bringing_water",  # 17
+                #     "tidying_bedroom",  # 18
+                #     "sorting_vegetables",  # 20
+                #     "putting_shoes_on_rack",  # 22
+                #     "boxing_books_up_for_storage",  # 23
+                #     "clearing_food_from_table_into_fridge",  # 25
+                #     "sorting_household_items",  # 27
+                #     "setting_the_fire",  # 30
+                #     "wash_dog_toys",  # 33
+                #     "hanging_pictures",  # 34
+                #     "attach_a_camera_to_a_tripod",  # 35
+                #     "clean_a_trumpet",  # 37
+                #     "spraying_for_bugs",  # 38
+                #     "spraying_fruit_trees",  # 39
+                #     "make_microwave_popcorn",  # 40
+                #     # 41 is also missing annotations, so not included
+                #     "chop_an_onion",  # 42
+                #     "slicing_vegetables",  # 43
+                #     "cook_hot_dogs",  # 45
+                #     "cook_bacon",  # 46
+                #     "freeze_pies",  # 47
+                #     "canning_food",  # 48
+                #     "make_pizza",  # 49
+                # ],
                 prompt_from_task=False,
                 prompt_from_skill_annotations=True,
                 prompt_from_skill_annotations_use_base_prompt_pct=0.2,
@@ -877,7 +878,7 @@ _CONFIGS = [
                     ((17, 18), 0.2),  # right upper arm positions
                     ((19, 20, 22), 0.2),  # right forearm and gripper position
                 ],
-                episodes_index=list(range(75)),
+                episodes_index=list(range(75, 130)),
                 behavior_dataset_root="/scratch/vision/group/behavior/2025-challenge-demos",
                 banned_skill_descriptions=["move to"],
                 prefer_prompt_from_data=True,

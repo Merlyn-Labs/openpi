@@ -87,6 +87,9 @@ class Pi0(_model.BaseModel):
         self.loss_weighting_strategy = config.loss_weighting_strategy
         self.action_groups = config.action_groups
         self.group_weights = config.group_weights
+        logger.info(f"Loss weighting strategy: {self.loss_weighting_strategy}")
+        logger.info(f"Action groups: {self.action_groups}")
+        logger.info(f"Group weights: {self.group_weights}")
         paligemma_config = _gemma.get_config(config.paligemma_variant)
         action_expert_config = _gemma.get_config(config.action_expert_variant)
         # TODO: rewrite gemma in NNX. For now, use bridge.
@@ -207,8 +210,8 @@ class Pi0(_model.BaseModel):
 
     @override
     def compute_loss(
-        self, rng: at.KeyArrayLike, observation: _model.Observation, actions: _model.Actions, *, train: bool = False
-    ) -> at.Float[at.Array, "*b ah"]:
+        self, rng: at.KeyArrayLike, observation: _model.Observation, actions: _model.Actions, *, train: bool = False, return_per_dim: bool = False
+    ) -> at.Float[at.Array, "*b ah"] | tuple[at.Float[at.Array, "*b ah"], at.Float[at.Array, "*b ah ad"]]:
 
         def _norm(x, axis=-1, eps=1e-8):
             return jnp.sqrt(jnp.sum(x * x, axis=axis) + eps)
@@ -249,6 +252,9 @@ class Pi0(_model.BaseModel):
             group_weights=self.group_weights,
             use_delta_weighting=True,
         )  # [B, AH]
+
+        if return_per_dim:
+            return weighted_loss, per_dim_loss  # [B, AH], [B, AH, AD]
 
         return weighted_loss  # [B, AH]
 

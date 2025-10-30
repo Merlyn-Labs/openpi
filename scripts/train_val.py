@@ -376,15 +376,15 @@ def train_step(
     def loss_fn(
         model: _model.BaseModel, rng: at.KeyArrayLike, observation: _model.Observation, actions: _model.Actions
     ):
-        chunked_loss = model.compute_loss(rng, observation, actions, train=True)
-        return jnp.mean(chunked_loss)
+        chunked_loss, per_dim_loss = model.compute_loss(rng, observation, actions, train=True, return_per_dim=True)
+        return jnp.mean(chunked_loss), per_dim_loss
 
     train_rng = jax.random.fold_in(rng, state.step)
     observation, actions = batch
 
     # Filter out frozen params.
     diff_state = nnx.DiffState(0, config.trainable_filter)
-    loss, grads = nnx.value_and_grad(loss_fn, argnums=diff_state)(model, train_rng, observation, actions)
+    (loss, per_dim_loss), grads = nnx.value_and_grad(loss_fn, argnums=diff_state, has_aux=True)(model, train_rng, observation, actions)
 
     params = state.params.filter(config.trainable_filter)
     updates, new_opt_state = state.tx.update(grads, state.opt_state, params)
@@ -412,10 +412,15 @@ def train_step(
             lambda _, x: x.value.ndim > 1,
         ),
     )
+
+    # Compute per-dimension loss statistics (mean over batch and horizon)
+    per_dim_loss_mean = jnp.mean(per_dim_loss, axis=(0, 1))  # [D]
+
     info = {
         "loss": loss,
         "grad_norm": optax.global_norm(grads),
         "param_norm": optax.global_norm(kernel_params),
+        "per_dim_loss": per_dim_loss_mean,  # Store per-dimension losses
     }
     return new_state, info
 
@@ -491,10 +496,27 @@ def main(config: _config.TrainConfig):
         infos.append(info)
         if step % config.log_interval == 0:
             stacked_infos = common_utils.stack_forest(infos)
+
+            # Handle per-dimension losses separately to preserve dimension structure
+            per_dim_losses = stacked_infos.pop("per_dim_loss", None)
+            if per_dim_losses is not None:
+                # Average only over the batch accumulation (axis 0), keep dimension structure
+                per_dim_losses = jax.device_get(jnp.mean(per_dim_losses, axis=0))
+
+            # Reduce remaining scalar metrics
             reduced_info = jax.device_get(jax.tree.map(jnp.mean, stacked_infos))
+
             info_str = ", ".join(f"{k}={v:.4f}" for k, v in reduced_info.items())
             pbar.write(f"Step {step}: {info_str}")
+
+            # Log scalar metrics
             wandb.log(reduced_info, step=step)
+
+            # Log per-dimension losses with descriptive names
+            if per_dim_losses is not None:
+                per_dim_dict = {f"loss/dim_{i}": float(per_dim_losses[i]) for i in range(per_dim_losses.shape[0])}
+                wandb.log(per_dim_dict, step=step)
+
             infos = []
         if step % config.val_log_interval == 0:
             logging.info("Computing validation loss at step %d", step)

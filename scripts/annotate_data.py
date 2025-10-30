@@ -179,6 +179,6 @@ for task_dir in task_dirs:
 
     print(f"Processing {total_files} files in {annotations_dir}...")
 
-    with ThreadPoolExecutor(max_workers=4) as executor:
+    with ThreadPoolExecutor(max_workers=10) as executor:
         for idx, file in enumerate(files):
             executor.submit(process_file, annotations_dir, prompt_out_dir, file, idx, total_files, existing_prompts)

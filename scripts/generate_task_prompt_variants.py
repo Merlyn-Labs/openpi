@@ -17,7 +17,7 @@ model = "gpt-5"
 EPISODES_PER_TASK = 200
 MAX_WORKERS = 4
 
-# ACCEPTABLE_TASKS_LIST = [0,1,3,4,5,7,13,15,16,17,18,20,22,23,25,27,30,33,34,35,37,38,39,40,42,43,45,46,47,48,49]
+ACCEPTABLE_TASKS_LIST = [0,1,3,4,5,7,13,15,16,17,18,20,22,23,25,27,30,33,34,35,37,38,39,40,42,43,45,46,47,48,49]
 
 def load_progress():
     """Load progress from the progress file."""
@@ -136,10 +136,12 @@ def process_task(task_index, task_prompt, episodes, progress):
     task_id = task_prompt[:50]  # Use first 50 chars as identifier
     
     # Check if we've already processed this task
-    if task_id in progress:
+    if task_id in progress and task_index in ACCEPTABLE_TASKS_LIST:  # we wanna do all now, so explicitly do the ones which were previously not in acceptable tasks list
         print(f"Skipping task (already processed): {task_prompt[:80]}...")
         return None
     
+    print(f"Processing task {task_index}: {task_id}...")
+
     # if task_index not in ACCEPTABLE_TASKS_LIST:
     #     print(f"Skipping task {task_index} (not in acceptable tasks list): {task_id}...")
     #     return task_id, episodes
@@ -216,7 +218,7 @@ def main():
     for task_index, (task_prompt, episodes) in enumerate(tasks_list):
         task_id = task_prompt[:50]
         
-        if task_id in progress:
+        if task_id in progress and task_index in ACCEPTABLE_TASKS_LIST:  # we wanna do all now, so explicitly do the ones which were previously not in acceptable tasks list
             continue
         
         result = process_task(task_index, task_prompt, episodes, progress)
