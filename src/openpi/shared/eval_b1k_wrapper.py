@@ -31,7 +31,7 @@ class B1KPolicyWrapper():
         self.temporal_ensemble_max = 5        # max number of sequences to ensemble
         self.step_counter = 0
 
-        dataset_root = config.data.behavior_dataset_root
+        dataset_root = config.data.base_config.behavior_dataset_root
         self.task_prompt_map = {}
         TASKS_METADATA_PATH = os.path.join(dataset_root, "meta/episodes.json")
         if os.path.exists(TASKS_METADATA_PATH):
@@ -206,6 +206,7 @@ class B1KPolicyWrapper():
             "observation/state": joint_positions,
             "prompt": self.text_prompt,
         }
+        print(f"batch['prompt'] i.e. self.text_prompt is: {batch['prompt']}")
         try:
             action = self.policy.infer(batch) 
             self.last_action = action
