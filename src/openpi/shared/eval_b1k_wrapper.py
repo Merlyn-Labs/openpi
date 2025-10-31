@@ -1,5 +1,8 @@
 import numpy as np
 import torch
+import os
+import json
+from openpi.training import config as _config
 from openpi_client.base_policy import BasePolicy
 from openpi_client.image_tools import resize_with_pad
 from collections import deque
@@ -11,6 +14,7 @@ class B1KPolicyWrapper():
     def __init__(
         self, 
         policy: BasePolicy,
+        config: _config.TrainConfig,
         text_prompt : str = "Turn on the radio receiver that's on the table in the living room.",
         control_mode : str = "temporal_ensemble",
         action_horizon : int = 10,
@@ -26,11 +30,30 @@ class B1KPolicyWrapper():
         self.max_len = 50                     # how long the policy sequences are
         self.temporal_ensemble_max = 5        # max number of sequences to ensemble
         self.step_counter = 0
-    
+
+        dataset_root = config.data.base_config.behavior_dataset_root
+        self.task_prompt_map = {}
+        TASKS_METADATA_PATH = os.path.join(dataset_root, "meta/tasks.jsonl")
+        if os.path.exists(TASKS_METADATA_PATH):
+            with open(TASKS_METADATA_PATH, "r") as f:
+                for line in f:
+                    task = json.loads(line)
+                    self.task_prompt_map[task["task_index"]] = task["task"]
+
     def reset(self):
         self.action_queue = deque([],maxlen=self.action_horizon)
         self.last_action = {"actions": np.zeros((self.action_horizon, 23), dtype=np.float64)}
         self.step_counter = 0
+
+    def get_prompt_from_obs(self, obs: dict) -> str:
+        if "prompt" in obs:
+            return obs["prompt"]
+
+        task_id = int(obs["task_id"])
+        if task_id in self.task_prompt_map:
+            return self.task_prompt_map[task_id]
+
+        return self.text_prompt
 
     def process_obs(self, obs: dict) -> dict:
         """
@@ -60,7 +83,7 @@ class B1KPolicyWrapper():
         processed_obs = {
             "observation": img_obs,  # Shape: (1, 3, H, W, C)
             "proprio": prop_state,
-            "prompt": self.text_prompt,
+            "prompt": self.get_prompt_from_obs(obs),
         }
         return processed_obs
     
@@ -79,7 +102,7 @@ class B1KPolicyWrapper():
                 "observation/wrist_image_left": nbatch["observation"][0, 1],
                 "observation/wrist_image_right": nbatch["observation"][0, 2],
                 "observation/state": joint_positions,
-                "prompt": self.text_prompt,
+                "prompt": input_obs["prompt"],
             }
 
             try:
@@ -181,8 +204,9 @@ class B1KPolicyWrapper():
             "observation/wrist_image_left": nbatch["observation"][0, 1],
             "observation/wrist_image_right": nbatch["observation"][0, 2],
             "observation/state": joint_positions,
-            "prompt": self.text_prompt,
+            "prompt": nbatch["prompt"],
         }
+        print(f"batch['prompt']: {batch['prompt']}")
         try:
             action = self.policy.infer(batch) 
             self.last_action = action
