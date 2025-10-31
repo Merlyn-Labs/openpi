@@ -817,11 +817,11 @@ _CONFIGS = [
             },
             group_weights={
                 "base": 1.0,
-                "trunk": 2.5,
-                "left_arm": 6.0,
-                "left_gripper": 4.0,
-                "right_arm": 6.0,
-                "right_gripper": 4.0,
+                "trunk": 1.0,
+                "left_arm": 4,
+                "left_gripper": 2.0,
+                "right_arm": 4,
+                "right_gripper": 2.0,
                 "padding": 0.0,
             },
         ),
@@ -866,23 +866,23 @@ _CONFIGS = [
                 # ],
                 prompt_from_task=False,
                 prompt_from_skill_annotations=True,
-                prompt_from_skill_annotations_use_base_prompt_pct=0.2,
+                prompt_from_skill_annotations_use_base_prompt_pct=0.3,
                 proprio_dropout_dropout_whole_proprio_pct=0.3,
                 proprio_dropout_proprio_groups=[
                     ((0, 1, 2), 0.2),  # base velocity
                     ((3, 4, 5, 6), 0.2),  # trunk positions
-                    ((7, 8, 9), 0.2),  # left shoulder positions
-                    ((10, 11), 0.2),  # left upper arm positions
-                    ((12, 13, 21), 0.2),  # left forearm and gripper position
-                    ((14, 15, 16), 0.2),  # right shoulder positions
-                    ((17, 18), 0.2),  # right upper arm positions
-                    ((19, 20, 22), 0.2),  # right forearm and gripper position
+                    ((7, 8, 9), 0.1),  # left shoulder positions
+                    ((10, 11), 0.1),  # left upper arm positions
+                    ((12, 13, 14), 0.1),  # left forearm and gripper position
+                    ((15, 16, 17), 0.1),  # right shoulder positions
+                    ((18, 19), 0.1),  # right upper arm positions
+                    ((20, 21, 22), 0.1),  # right forearm and gripper position
                 ],
                 episodes_index=list(range(75, 120)),
                 behavior_dataset_root="/scratch/vision/group/behavior/2025-challenge-demos",
                 banned_skill_descriptions=[
                     "move to",
-                    # "pick up from",
+                    "pick up from",
                 ],
                 prefer_prompt_from_data=True,
             ),
@@ -894,9 +894,9 @@ _CONFIGS = [
         ).get_freeze_filter(),
         lr_schedule=_optimizer.CosineDecaySchedule(
             warmup_steps=2_000,
-            peak_lr=3.5e-5,
+            peak_lr=2.5e-5,
             decay_steps=18_000,
-            decay_lr=3.5e-6,
+            decay_lr=2e-6,
         ),
         ema_decay=None,
         val_log_interval=5000,
