@@ -63,10 +63,10 @@ class Args:
     policy: Checkpoint | Default = dataclasses.field(default_factory=Default)
 
 
-def create_policy(args: Args) -> _policy.Policy:
+def create_policy(args: Args, config: _config.TrainConfig) -> _policy.Policy:
     """Create a policy from the given arguments."""
     return _policy_config.create_trained_policy(
-        _config.get_config(args.policy.config), args.policy.dir, default_prompt=args.default_prompt
+        config, args.policy.dir, default_prompt=args.default_prompt
     )
 
 
@@ -82,14 +82,15 @@ def main(args: Args) -> None:
     # log the prompt used
     logging.info(f"Using prompt: {prompt}")
 
-    policy = create_policy(args)
+    config = _config.get_config(args.policy.config)
+    policy = create_policy(args, config)
     policy_metadata = policy.metadata
 
     # Record the policy's behavior.
     if args.record:
         policy = _policy.PolicyRecorder(policy, "policy_records")
 
-    policy = B1KPolicyWrapper(policy, text_prompt=prompt)
+    policy = B1KPolicyWrapper(policy, config=config, text_prompt=prompt)
 
     hostname = socket.gethostname()
     local_ip = socket.gethostbyname(hostname)
