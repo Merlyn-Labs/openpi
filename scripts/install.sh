@@ -9,6 +9,6 @@ GIT_LFS_SKIP_SMUDGE=1 uv pip install -e .
 source .venv/bin/activate
 
 # Install behavior for server deploy 
-cd /root/BEHAVIOR-1K/
+cd /workspace/BEHAVIOR-1K/
 uv pip install -e bddl
 uv pip install -e OmniGibson[eval]

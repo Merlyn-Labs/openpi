@@ -810,8 +810,8 @@ _CONFIGS = [
                 "base": (0, 3),             # base x-y-theta velocity
                 "trunk": (3, 7),            # trunk joints
                 "left_arm": (7, 14),        # left arm joints
-                "left_gripper": (14, 15),   # left gripper width
-                "right_arm": (15, 22),      # right arm joints
+                "right_arm": (14, 21),      # right arm joints
+                "left_gripper": (21, 22),   # left gripper width
                 "right_gripper": (22, 23),  # right gripper width
                 "padding": (23, 32),        # padding dimensions
             },
@@ -819,8 +819,8 @@ _CONFIGS = [
                 "base": 1.0,
                 "trunk": 1.0,
                 "left_arm": 4.0,
-                "left_gripper": 2.0,
                 "right_arm": 4.0,
+                "left_gripper": 2.0,
                 "right_gripper": 2.0,
                 "padding": 0.0,
             },
@@ -866,18 +866,19 @@ _CONFIGS = [
                 # ],
                 prompt_from_task=False,
                 prompt_from_skill_annotations=True,
-                prompt_from_skill_annotations_use_base_prompt_pct=0.3,
-                proprio_dropout_dropout_whole_proprio_pct=0.3,
-                proprio_dropout_proprio_groups=[
-                    ((0, 1, 2), 0.2),  # base velocity
-                    ((3, 4, 5, 6), 0.2),  # trunk positions
-                    ((7, 8, 9), 0.1),  # left shoulder positions
-                    ((10, 11), 0.1),  # left upper arm positions
-                    ((12, 13, 14), 0.1),  # left forearm and gripper position
-                    ((15, 16, 17), 0.1),  # right shoulder positions
-                    ((18, 19), 0.1),  # right upper arm positions
-                    ((20, 21, 22), 0.1),  # right forearm and gripper position
-                ],
+                prompt_from_skill_annotations_use_base_prompt_pct=0.4,
+                proprio_dropout_dropout_whole_proprio_pct=0.4,
+                # proprio_dropout_proprio_groups=[
+                #     ((0, 1, 2), 0.2),  # base velocity
+                #     ((3, 4, 5, 6), 0.2),  # trunk positions
+                #     ((7, 8, 9), 0.1),  # left shoulder positions
+                #     ((10, 11), 0.1),  # left upper arm positions
+                #     ((12, 13, 14), 0.1),  # left forearm and gripper position
+                #     ((15, 16, 17), 0.1),  # right shoulder positions
+                #     ((18, 19), 0.1),  # right upper arm positions
+                #     ((20, 21, 22), 0.1),  # right forearm and gripper position
+                # ],
+                proprio_dropout_proprio_groups=[],
                 episodes_index=list(range(75, 120)),
                 behavior_dataset_root="/vision/group/behavior/2025-challenge-demos",
                 banned_skill_descriptions=[
