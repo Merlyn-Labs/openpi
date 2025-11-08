@@ -9,6 +9,6 @@ XLA_PYTHON_CLIENT_MEM_FRACTION=0.92 OMNIGIBSON_NO_SIGNALS=1 uv run scripts/train
     --exp_name="$EXP_NAME" \
     --overwrite \
     --batch_size=256 \
-    --weight_loader.params_path=/workspace/openpi/outputs/checkpoints/pi05_b1k/openpi_05_20251029_024836/25000/params \
+    --weight_loader.params_path=/workspace/openpi/outputs/checkpoints/pi05_b1k/openpi_05_20251108_052323/16000/params \
     --num_train_steps=50000 \
     --val_log_interval=1000
