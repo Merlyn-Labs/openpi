@@ -805,25 +805,7 @@ _CONFIGS = [
             pi05=True,
             action_horizon=50,
             paligemma_variant="gemma_2b_lora",
-            loss_weighting_strategy="per_group",
-            action_groups={
-                "base": (0, 3),             # base x-y-theta velocity
-                "trunk": (3, 7),            # trunk joints
-                "left_arm": (7, 14),        # left arm joints
-                "right_arm": (14, 21),      # right arm joints
-                "left_gripper": (21, 22),   # left gripper width
-                "right_gripper": (22, 23),  # right gripper width
-                "padding": (23, 32),        # padding dimensions
-            },
-            group_weights={
-                "base": 1.0,
-                "trunk": 1.0,
-                "left_arm": 4.0,
-                "right_arm": 4.0,
-                "left_gripper": 2.0,
-                "right_gripper": 2.0,
-                "padding": 0.0,
-            },
+            loss_weighting_strategy="original",
         ),
         data=LeRobotB1KDataConfig(
             repo_id="behavior-1k/2025-challenge-demos",
@@ -867,7 +849,7 @@ _CONFIGS = [
                 prompt_from_task=False,
                 prompt_from_skill_annotations=True,
                 prompt_from_skill_annotations_use_base_prompt_pct=0.4,
-                proprio_dropout_dropout_whole_proprio_pct=0.2,
+                proprio_dropout_dropout_whole_proprio_pct=0.4,
                 # proprio_dropout_proprio_groups=[
                 #     ((0, 1, 2), 0.2),  # base velocity
                 #     ((3, 4, 5, 6), 0.2),  # trunk positions
