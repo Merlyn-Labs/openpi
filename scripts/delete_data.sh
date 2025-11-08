@@ -1,0 +1,23 @@
+rm -r /vision/group/behavior/2025-challenge-demos/data/task-0002
+rm -r /vision/group/behavior/2025-challenge-demos/data/task-0003
+rm -r /vision/group/behavior/2025-challenge-demos/data/task-0004
+rm -r /vision/group/behavior/2025-challenge-demos/data/task-0005
+rm -r /vision/group/behavior/2025-challenge-demos/data/task-0006
+rm -r /vision/group/behavior/2025-challenge-demos/data/task-0008
+rm -r /vision/group/behavior/2025-challenge-demos/data/task-0009
+rm -r /vision/group/behavior/2025-challenge-demos/data/task-001*
+rm -r /vision/group/behavior/2025-challenge-demos/data/task-002*
+rm -r /vision/group/behavior/2025-challenge-demos/data/task-003*
+rm -r /vision/group/behavior/2025-challenge-demos/data/task-004*
+
+rm -r /vision/group/behavior/2025-challenge-demos/meta/episodes/task-0002
+rm -r /vision/group/behavior/2025-challenge-demos/meta/episodes/task-0003
+rm -r /vision/group/behavior/2025-challenge-demos/meta/episodes/task-0004
+rm -r /vision/group/behavior/2025-challenge-demos/meta/episodes/task-0005
+rm -r /vision/group/behavior/2025-challenge-demos/meta/episodes/task-0006
+rm -r /vision/group/behavior/2025-challenge-demos/meta/episodes/task-0008
+rm -r /vision/group/behavior/2025-challenge-demos/meta/episodes/task-0009
+rm -r /vision/group/behavior/2025-challenge-demos/meta/episodes/task-001*
+rm -r /vision/group/behavior/2025-challenge-demos/meta/episodes/task-002*
+rm -r /vision/group/behavior/2025-challenge-demos/meta/episodes/task-003*
+rm -r /vision/group/behavior/2025-challenge-demos/meta/episodes/task-004*

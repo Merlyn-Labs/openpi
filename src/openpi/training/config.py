@@ -810,14 +810,14 @@ _CONFIGS = [
         data=LeRobotB1KDataConfig(
             repo_id="behavior-1k/2025-challenge-demos",
             base_config=DataConfig(
-                tasks=None,  # use all tasks
-                # tasks=[
-                #     "turning_on_radio",  # 0
-                #     "picking_up_trash",  # 1
+                # tasks=None,  # use all tasks
+                tasks=[
+                    "turning_on_radio",  # 0
+                    "picking_up_trash",  # 1
                 #     "cleaning_up_plates_and_food",  # 3
                 #     "can_meat",  # 4
                 #     "setting_mousetraps",  # 5
-                #     "picking_up_toys",  # 7
+                    "picking_up_toys",  # 7
                 #     # "putting_dishes_away_after_cleaning",  # 11, but missing annotations
                 #     "loading_the_car",  # 13
                 #     "bringing_in_wood",  # 15
@@ -845,7 +845,7 @@ _CONFIGS = [
                 #     "freeze_pies",  # 47
                 #     "canning_food",  # 48
                 #     "make_pizza",  # 49
-                # ],
+                ],
                 prompt_from_task=False,
                 prompt_from_skill_annotations=True,
                 prompt_from_skill_annotations_use_base_prompt_pct=0.4,
@@ -861,7 +861,7 @@ _CONFIGS = [
                 #     ((20, 21, 22), 0.1),  # right forearm and gripper position
                 # ],
                 proprio_dropout_proprio_groups=[],
-                episodes_index=list(range(75, 120)),
+                episodes_index=list(range(190)),  # Should take range(45) now? Or maybe 120, 165. Def never before seen. I am desperate after all... Or maybe just do turning_on_radio now? That is actually not a bad idea...
                 behavior_dataset_root="/vision/group/behavior/2025-challenge-demos",
                 undersampled_skill_descriptions={
                     "move to": 0.3,
