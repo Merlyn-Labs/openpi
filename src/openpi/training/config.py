@@ -867,7 +867,7 @@ _CONFIGS = [
                 prompt_from_task=False,
                 prompt_from_skill_annotations=True,
                 prompt_from_skill_annotations_use_base_prompt_pct=0.4,
-                proprio_dropout_dropout_whole_proprio_pct=0.4,
+                proprio_dropout_dropout_whole_proprio_pct=0.2,
                 # proprio_dropout_proprio_groups=[
                 #     ((0, 1, 2), 0.2),  # base velocity
                 #     ((3, 4, 5, 6), 0.2),  # trunk positions
@@ -882,8 +882,8 @@ _CONFIGS = [
                 episodes_index=list(range(75, 120)),
                 behavior_dataset_root="/vision/group/behavior/2025-challenge-demos",
                 undersampled_skill_descriptions={
-                    "move to": 0.08,
-                    "pick up from": 0.2,
+                    "move to": 0.3,
+                    "pick up from": 0.4,
                 },
                 prefer_prompt_from_data=True,
             ),
@@ -895,9 +895,9 @@ _CONFIGS = [
         ).get_freeze_filter(),
         lr_schedule=_optimizer.CosineDecaySchedule(
             warmup_steps=2_000,
-            peak_lr=2.5e-5,
+            peak_lr=2e-5,
             decay_steps=50_000,
-            decay_lr=2.5e-6,
+            decay_lr=2e-6,
         ),
         ema_decay=None,
         val_log_interval=5000,
