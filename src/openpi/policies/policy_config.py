@@ -126,7 +126,8 @@ def create_trained_policy(
         # that the policy is using the same normalization stats as the original training process.
         if data_config.asset_id is None:
             raise ValueError("Asset id is required to load norm stats.")
-        norm_stats = _checkpoints.load_norm_stats(checkpoint_dir / "assets", data_config.asset_id)
+        # norm_stats = _checkpoints.load_norm_stats(checkpoint_dir / "assets", data_config.asset_id)
+        norm_stats = _checkpoints.load_norm_stats(pathlib.Path("outputs/assets/pi05_b1k"), data_config.asset_id)
 
     return _policy.Policy(
         model,
