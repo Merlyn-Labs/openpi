@@ -96,8 +96,8 @@ def main(config_name: str, max_frames: int | None = None):
             repo_id=data_config.repo_id,
             root=data_config.behavior_dataset_root,
             tasks=None,
-            modalities=[], 
-            cameras=[]
+            modalities=["rgb"],
+            cameras=["head", "left_wrist", "right_wrist"],
         )
         norm_stats = {"state": {}, "actions": {}}
         for key in ["mean", "std", "q01", "q99"]:
