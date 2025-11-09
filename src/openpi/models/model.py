@@ -94,7 +94,7 @@ class Observation(Generic[ArrayT]):
     # Low-dimensional robot state.
     state: at.Float[ArrayT, "*b s"]
     # Proprioceptive visibility mask (optional, for dropout).
-    proprio_visibility_mask: at.Bool[ArrayT, "*b s"] | None = None
+    proprio_visibility_mask: at.Float[ArrayT, "*b s"] | None = None
 
     # Tokenized prompt.
     tokenized_prompt: at.Int[ArrayT, "*b l"] | None = None
