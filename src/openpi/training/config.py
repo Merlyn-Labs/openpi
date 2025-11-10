@@ -139,8 +139,10 @@ class ModelTransformFactory(GroupFactory):
     default_prompt: str | None = None
 
     def __call__(self, model_config: _model.BaseModelConfig) -> _transforms.Group:
-        B1K_EVAL_TIME = os.getenv("OMNIGIBSON_NO_SIGNALS", "").lower() in ("1", "true", "yes")
+        B1K_EVAL_TIME = os.getenv("B1K_EVAL_TIME", "").lower() in ("1", "true", "yes")
         proprio_dropout_percent = model_config.proprio_dropout_dropout_whole_proprio_pct if B1K_EVAL_TIME else 0.0
+        if B1K_EVAL_TIME:
+            logging.info(f"It is B1K EVAL TIME! Using proprio dropout percent: {proprio_dropout_percent}")
         match model_config.model_type:
             case _model.ModelType.PI0:
                 return _transforms.Group(
