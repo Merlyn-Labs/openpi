@@ -139,12 +139,18 @@ class ModelTransformFactory(GroupFactory):
     default_prompt: str | None = None
 
     def __call__(self, model_config: _model.BaseModelConfig) -> _transforms.Group:
+        B1K_EVAL_TIME = os.getenv("OMNIGIBSON_NO_SIGNALS", "").lower() in ("1", "true", "yes")
+        proprio_dropout_percent = model_config.proprio_dropout_dropout_whole_proprio_pct if B1K_EVAL_TIME else 0.0
         match model_config.model_type:
             case _model.ModelType.PI0:
                 return _transforms.Group(
                     inputs=[
                         _transforms.InjectDefaultPrompt(self.default_prompt),
                         _transforms.ResizeImages(224, 224),
+                        _transforms.ProprioDropout(
+                            dropout_whole_proprio_pct=proprio_dropout_percent,
+                            proprio_groups=[],
+                        ),
                         _transforms.TokenizePrompt(
                             _tokenizer.PaligemmaTokenizer(model_config.max_token_len),
                         ),
@@ -157,6 +163,10 @@ class ModelTransformFactory(GroupFactory):
                     inputs=[
                         _transforms.InjectDefaultPrompt(self.default_prompt),
                         _transforms.ResizeImages(224, 224),
+                        _transforms.ProprioDropout(
+                            dropout_whole_proprio_pct=proprio_dropout_percent,
+                            proprio_groups=[],
+                        ),
                         _transforms.TokenizePrompt(
                             _tokenizer.PaligemmaTokenizer(model_config.max_token_len),
                             discrete_state_input=model_config.discrete_state_input,
@@ -745,7 +755,11 @@ _CONFIGS = [
         name="pi0_b1k",
         exp_name="openpi",
         project_name="B1K",
-        model=pi0_config.Pi0Config(action_horizon=50, paligemma_variant="gemma_2b_lora"),
+        model=pi0_config.Pi0Config(
+            action_horizon=50,
+            paligemma_variant="gemma_2b_lora",
+            proprio_dropout_dropout_whole_proprio_pct=0.2,
+        ),
         data=LeRobotB1KDataConfig(
             repo_id="behavior-1k/2025-challenge-demos",
             base_config=DataConfig(
@@ -777,6 +791,7 @@ _CONFIGS = [
             action_horizon=256,
             paligemma_variant="gemma_2b_lora",
             loss_weighting_strategy="original",
+            proprio_dropout_dropout_whole_proprio_pct=0.2,
         ),
         data=LeRobotB1KDataConfig(
             repo_id="behavior-1k/2025-challenge-demos",
@@ -831,6 +846,7 @@ _CONFIGS = [
             action_horizon=256,
             paligemma_variant="gemma_2b_lora",
             loss_weighting_strategy="original",
+            proprio_dropout_dropout_whole_proprio_pct=0.2,
         ),
         data=LeRobotB1KDataConfig(
             repo_id="behavior-1k/2025-challenge-demos",
@@ -878,6 +894,7 @@ _CONFIGS = [
             action_horizon=256,
             paligemma_variant="gemma_2b_lora",
             loss_weighting_strategy="original",
+            proprio_dropout_dropout_whole_proprio_pct=0.2,
         ),
         data=LeRobotB1KDataConfig(
             repo_id="behavior-1k/2025-challenge-demos",
@@ -899,7 +916,8 @@ _CONFIGS = [
         weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
         num_train_steps=50_000,
         freeze_filter=pi0_config.Pi0Config(
-            pi05=True, action_horizon=50, paligemma_variant="gemma_2b_lora"
+            pi05=True, action_horizon=50, paligemma_variant="gemma_2b_lora",
+            proprio_dropout_dropout_whole_proprio_pct=0.5,
         ).get_freeze_filter(),
         lr_schedule=_optimizer.CosineDecaySchedule(
             warmup_steps=2_000,
@@ -925,6 +943,7 @@ _CONFIGS = [
             action_horizon=50,
             paligemma_variant="gemma_2b_lora",
             loss_weighting_strategy="original",
+            proprio_dropout_dropout_whole_proprio_pct=0.5,
         ),
         data=LeRobotB1KDataConfig(
             repo_id="behavior-1k/2025-challenge-demos",

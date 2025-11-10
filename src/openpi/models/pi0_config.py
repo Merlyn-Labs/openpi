@@ -42,6 +42,8 @@ class Pi0Config(_model.BaseModelConfig):
     # Default emphasizes arm control over navigation
     group_weights: dict[str, float] | None = None
 
+    proprio_dropout_dropout_whole_proprio_pct: float = 0.0  # eval time proprio dropout probability
+
     def __post_init__(self):
         if self.max_token_len is None:
             object.__setattr__(self, "max_token_len", 200 if self.pi05 else 48)

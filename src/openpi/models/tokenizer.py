@@ -27,6 +27,8 @@ class PaligemmaTokenizer:
             # Mask out the state dimensions that are not visible with an asterisk
             if proprio_visibility_mask is None:
                 proprio_visibility_mask = np.ones_like(state)
+            else:
+                logging.info(f"Proprio visibility mask: {proprio_visibility_mask}")
             state_str = " ".join(
                 str(x) if is_x_visible else "*" 
                 for x, is_x_visible in zip(discretized_state, proprio_visibility_mask.astype(bool))

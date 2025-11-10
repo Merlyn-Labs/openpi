@@ -384,7 +384,8 @@ class PadStatesAndActions(DataTransformFn):
 
     def __call__(self, data: DataDict) -> DataDict:
         data["state"] = pad_to_dim(data["state"], self.model_action_dim, axis=-1)
-        data["proprio_visibility_mask"] = pad_to_dim(data["proprio_visibility_mask"], self.model_action_dim, axis=-1)
+        if "proprio_visibility_mask" in data:
+            data["proprio_visibility_mask"] = pad_to_dim(data["proprio_visibility_mask"], self.model_action_dim, axis=-1)
         if "actions" in data:
             data["actions"] = pad_to_dim(data["actions"], self.model_action_dim, axis=-1)
         return data
