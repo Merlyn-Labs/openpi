@@ -24,7 +24,7 @@ def extract_skill_descriptions_with_frames(annotations_dir: str) -> tuple[Set[st
     frame_counts = {}
 
     # Find all JSON files matching the pattern
-    pattern = f"{annotations_dir}/*/*.json"
+    pattern = f"{annotations_dir}/task-0000/*.json"
     json_files = glob.glob(pattern)
 
     print(f"Found {len(json_files)} JSON files to process")
@@ -73,7 +73,7 @@ def extract_skill_descriptions_with_frames(annotations_dir: str) -> tuple[Set[st
 
 
 def main():
-    annotations_dir = "/scratch/vision/group/behavior/2025-challenge-demos/annotations"
+    annotations_dir = "/vision/group/behavior/2025-challenge-demos/annotations"
     
     print("Extracting unique skill descriptions...")
     unique_descriptions, frame_counts = extract_skill_descriptions_with_frames(annotations_dir)
@@ -95,19 +95,19 @@ def main():
     print(f"Total: {len(unique_descriptions)} unique skill descriptions")
     print(f"Total frames: {total_frames:,}")
     
-    # Save to file
-    output_file = "/root/openpi/unique_skill_descriptions.txt"
-    with open(output_file, 'w') as f:
-        f.write("Unique Skill Descriptions with Frame Counts\n")
-        f.write("=" * 80 + "\n\n")
-        for description, frames in sorted_by_frames:
-            percentage = (frames / total_frames * 100) if total_frames > 0 else 0
-            f.write(f"{description:25s}  {frames:>12,} frames  ({percentage:5.2f}%)\n")
-        f.write("\n" + "=" * 80 + "\n")
-        f.write(f"Total: {len(unique_descriptions)} unique skill descriptions\n")
-        f.write(f"Total frames: {total_frames:,}\n")
+#     # Save to file
+#     output_file = "/root/openpi/unique_skill_descriptions.txt"
+#     with open(output_file, 'w') as f:
+#         f.write("Unique Skill Descriptions with Frame Counts\n")
+#         f.write("=" * 80 + "\n\n")
+#         for description, frames in sorted_by_frames:
+#             percentage = (frames / total_frames * 100) if total_frames > 0 else 0
+#             f.write(f"{description:25s}  {frames:>12,} frames  ({percentage:5.2f}%)\n")
+#         f.write("\n" + "=" * 80 + "\n")
+#         f.write(f"Total: {len(unique_descriptions)} unique skill descriptions\n")
+#         f.write(f"Total frames: {total_frames:,}\n")
     
-    print(f"\nSaved to: {output_file}")
+#     print(f"\nSaved to: {output_file}")
 
 
 if __name__ == "__main__":

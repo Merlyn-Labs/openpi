@@ -3,7 +3,7 @@
 EXP_NAME="openpi_05_$(date +%Y%m%d_%H%M%S)"
 echo "Experiment name: $EXP_NAME"
 
-CUDA_VISIBLE_DEVICES=2,3 XLA_PYTHON_CLIENT_MEM_FRACTION=0.92 OMNIGIBSON_NO_SIGNALS=1 uv run scripts/train_val.py pi05_single_task_picking_up_trash \
+CUDA_VISIBLE_DEVICES=2,3 XLA_PYTHON_CLIENT_MEM_FRACTION=0.92 OMNIGIBSON_NO_SIGNALS=1 uv run scripts/train_val.py pi05_single_task_turning_on_radio \
     --exp_name="$EXP_NAME" \
     --overwrite \
     --batch_size=64 \
