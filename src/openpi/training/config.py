@@ -838,6 +838,55 @@ _CONFIGS = [
     ),
 
     TrainConfig(
+        name="pi0_b1k_single_task",
+        exp_name="openpi",
+        project_name="B1K",
+        model=pi0_config.Pi0Config(
+            action_horizon=256,
+            paligemma_variant="gemma_2b_lora",
+            loss_weighting_strategy="original",
+            proprio_dropout_dropout_whole_proprio_pct=0.2,
+        ),
+        data=LeRobotB1KDataConfig(
+            repo_id="behavior-1k/2025-challenge-demos",
+            base_config=DataConfig(
+                tasks=[
+                    "moving_boxes_to_storage",  # 16
+                ],
+                prompt_from_task=False,
+                prompt_from_skill_annotations=True,
+                prompt_from_skill_annotations_use_base_prompt_pct=0.6,
+                proprio_dropout_dropout_whole_proprio_pct=0.7,
+                episodes_index=list(range(190)),
+                behavior_dataset_root="/vision/group/behavior/2025-challenge-demos",
+                undersampled_skill_descriptions={
+                    "move to": 0.3,
+                    "pick up from": 0.5,
+                },
+                prefer_prompt_from_data=True,
+            ),
+        ),
+        weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi0_base/params"),
+        num_train_steps=50_000,
+        freeze_filter=pi0_config.Pi0Config(
+            action_horizon=256, paligemma_variant="gemma_2b_lora"
+        ).get_freeze_filter(),
+        lr_schedule=_optimizer.CosineDecaySchedule(
+            warmup_steps=2_000,
+            peak_lr=3e-5,
+            decay_steps=50_000,
+            decay_lr=3e-6,
+        ),
+        ema_decay=None,
+        val_log_interval=5000,
+        val_repo_id="behavior-1k/2025-challenge-demos",
+        val_episodes_index=list(range(190, 200)),
+        assets_base_dir="./outputs/assets",
+        checkpoint_base_dir="./outputs/checkpoints",
+        num_workers=8,  # Safe with OMNIGIBSON_NO_SIGNALS=1; use fewer workers to reduce memory pressure
+    ),
+
+    TrainConfig(
         name="pi05_single_task",
         exp_name="openpi",
         project_name="B1K",
