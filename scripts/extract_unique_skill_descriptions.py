@@ -26,7 +26,7 @@ def extract_skill_descriptions_with_frames(annotations_dir: str) -> tuple[Set[st
     skill_string_counts = Counter()
 
     # Find all JSON files matching the pattern
-    pattern = f"{annotations_dir}/task-0016/*.json"
+    pattern = f"{annotations_dir}/task-0013/*.json"
     json_files = glob.glob(pattern)
 
     print(f"Found {len(json_files)} JSON files to process")
