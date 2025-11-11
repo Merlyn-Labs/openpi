@@ -7,6 +7,7 @@ import json
 import glob
 from pathlib import Path
 from typing import Set, Dict
+from collections import Counter
 
 def extract_skill_descriptions_with_frames(annotations_dir: str) -> tuple[Set[str], Dict[str, int]]:
     """
@@ -22,22 +23,30 @@ def extract_skill_descriptions_with_frames(annotations_dir: str) -> tuple[Set[st
     index = 0
     unique_descriptions = set()
     frame_counts = {}
+    skill_string_counts = Counter()
 
     # Find all JSON files matching the pattern
-    pattern = f"{annotations_dir}/task-0000/*.json"
+    pattern = f"{annotations_dir}/task-0016/*.json"
     json_files = glob.glob(pattern)
 
     print(f"Found {len(json_files)} JSON files to process")
 
     # Process each JSON file
-    for json_file in json_files:
+    for file_index, json_file in enumerate(json_files):
         try:
             with open(json_file, 'r') as f:
                 data = json.load(f)
 
             # Extract skill descriptions from skill_annotation array
             if 'skill_annotation' in data:
-                for skill in data['skill_annotation']:
+                # print(f"File Index: {file_index}")
+                # print(len(data['skill_annotation']))
+                full_task_skill_string = "–".join([f"{skill['skill_description'][0]}({', '.join(skill['object_id'][0])})" for skill in data['skill_annotation']])
+                if full_task_skill_string == "move to(door_bexenl_0)–open door(door_bexenl_0)–move to(storage_box_80)–pick up from(storage_box_80, floors_ulujpr_0)–move to(floors_nbxnpk_0)–place on(storage_box_80, floors_nbxnpk_0)–move to(storage_box_79)–pick up from(storage_box_79, floors_ulujpr_0)–move to(storage_box_80)–place on(storage_box_79, floors_nbxnpk_0)":
+                    print(f"PROBLEMATIC FILE: {json_file}")
+                skill_string_counts[full_task_skill_string] += 1
+                for skill_idx, skill in enumerate(data['skill_annotation']):
+                    # print(f"{skill_idx}: {skill['frame_duration'][0]}-{skill['frame_duration'][1]}: {skill['skill_description'][0]}({', '.join(skill['object_id'][0])})")
                     if 'skill_description' in skill:
                         # skill_description is a list, so iterate through it
                         assert len(skill['skill_description']) == 1, "Expected only one skill description per skill"
@@ -68,6 +77,9 @@ def extract_skill_descriptions_with_frames(annotations_dir: str) -> tuple[Set[st
         except Exception as e:
             print(f"Error processing {json_file}: {e}")
             continue
+
+    for skill_string, count in skill_string_counts.items():
+        print(f"{skill_string}: {count}")
 
     return unique_descriptions, frame_counts
 

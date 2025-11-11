@@ -126,6 +126,9 @@ class DataConfig:
     # Skill descriptions to ban from the prompt
     undersampled_skill_descriptions: dict[str, float] | None = None
 
+    # Multiplier to oversample boundaries
+    oversample_boundaries_multiplier: float | None = None
+
 class GroupFactory(Protocol):
     def __call__(self, model_config: _model.BaseModelConfig) -> _transforms.Group:
         """Create a group."""
@@ -936,7 +939,58 @@ _CONFIGS = [
         val_episodes_index=list(range(190, 200)),
         assets_base_dir="./outputs/assets",
         checkpoint_base_dir="./outputs/checkpoints",
-        num_workers=16,  # Safe with OMNIGIBSON_NO_SIGNALS=1; use fewer workers to reduce memory pressure
+        num_workers=8,  # Safe with OMNIGIBSON_NO_SIGNALS=1; use fewer workers to reduce memory pressure
+    ),
+
+    TrainConfig(
+        name="pi05_single_task_focus_on_boundaries",
+        exp_name="openpi",
+        project_name="B1K",
+        model=pi0_config.Pi0Config(
+            pi05=True,
+            action_horizon=256,
+            paligemma_variant="gemma_2b_lora",
+            loss_weighting_strategy="original",
+            proprio_dropout_dropout_whole_proprio_pct=0.2,
+        ),
+        data=LeRobotB1KDataConfig(
+            repo_id="behavior-1k/2025-challenge-demos",
+            base_config=DataConfig(
+                tasks=[
+                    "moving_boxes_to_storage",  # 16
+                ],
+                prompt_from_task=True,
+                prompt_from_skill_annotations=False,
+                prompt_from_skill_annotations_use_base_prompt_pct=1.0,
+                proprio_dropout_dropout_whole_proprio_pct=0.6,
+                proprio_dropout_proprio_groups=[],
+                episodes_index=(list(range(182)) + list(range(183, 190))),
+                undersampled_skill_descriptions={
+                    "move to": 0.3,
+                },
+                oversample_boundaries_multiplier=20.0,
+                behavior_dataset_root="/vision/group/behavior/2025-challenge-demos",
+                prefer_prompt_from_data=False,
+            ),
+        ),
+        weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
+        num_train_steps=50_000,
+        freeze_filter=pi0_config.Pi0Config(
+            pi05=True, action_horizon=50, paligemma_variant="gemma_2b_lora"
+        ).get_freeze_filter(),
+        lr_schedule=_optimizer.CosineDecaySchedule(
+            warmup_steps=2_000,
+            peak_lr=1e-5,
+            decay_steps=50_000,
+            decay_lr=1e-6,
+        ),
+        ema_decay=None,
+        val_log_interval=5000,
+        val_repo_id="behavior-1k/2025-challenge-demos",
+        val_episodes_index=list(range(190, 200)),
+        assets_base_dir="./outputs/assets",
+        checkpoint_base_dir="./outputs/checkpoints",
+        num_workers=8,  # Safe with OMNIGIBSON_NO_SIGNALS=1; use fewer workers to reduce memory pressure
     ),
 
     TrainConfig(
@@ -971,6 +1025,56 @@ _CONFIGS = [
         num_train_steps=50_000,
         freeze_filter=pi0_config.Pi0Config(
             pi05=True, action_horizon=50, paligemma_variant="gemma_2b_lora"
+        ).get_freeze_filter(),
+        lr_schedule=_optimizer.CosineDecaySchedule(
+            warmup_steps=2_000,
+            peak_lr=1e-5,
+            decay_steps=50_000,
+            decay_lr=1e-6,
+        ),
+        ema_decay=None,
+        val_log_interval=5000,
+        val_repo_id="behavior-1k/2025-challenge-demos",
+        val_episodes_index=list(range(190, 200)),
+        assets_base_dir="./outputs/assets",
+        checkpoint_base_dir="./outputs/checkpoints",
+        num_workers=8,  # Safe with OMNIGIBSON_NO_SIGNALS=1; use fewer workers to reduce memory pressure
+    ),
+
+    TrainConfig(
+        name="pi05_single_task_ah_512",
+        exp_name="openpi",
+        project_name="B1K",
+        model=pi0_config.Pi0Config(
+            pi05=True,
+            action_horizon=512,
+            paligemma_variant="gemma_2b_lora",
+            loss_weighting_strategy="original",
+            proprio_dropout_dropout_whole_proprio_pct=0.2,
+        ),
+        data=LeRobotB1KDataConfig(
+            repo_id="behavior-1k/2025-challenge-demos",
+            base_config=DataConfig(
+                tasks=[
+                    "moving_boxes_to_storage",  # 16
+                ],
+                prompt_from_task=True,
+                prompt_from_skill_annotations=False,
+                prompt_from_skill_annotations_use_base_prompt_pct=1.0,
+                proprio_dropout_dropout_whole_proprio_pct=0.6,
+                proprio_dropout_proprio_groups=[],
+                episodes_index=(list(range(182)) + list(range(183, 190))),
+                undersampled_skill_descriptions={
+                    "move to": 0.4,
+                },
+                behavior_dataset_root="/vision/group/behavior/2025-challenge-demos",
+                prefer_prompt_from_data=False,
+            ),
+        ),
+        weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
+        num_train_steps=50_000,
+        freeze_filter=pi0_config.Pi0Config(
+            pi05=True, action_horizon=512, paligemma_variant="gemma_2b_lora"
         ).get_freeze_filter(),
         lr_schedule=_optimizer.CosineDecaySchedule(
             warmup_steps=2_000,

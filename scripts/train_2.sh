@@ -3,10 +3,22 @@
 EXP_NAME="openpi_05_$(date +%Y%m%d_%H%M%S)"
 echo "Experiment name: $EXP_NAME"
 
-CUDA_VISIBLE_DEVICES=2,3 XLA_PYTHON_CLIENT_MEM_FRACTION=0.92 OMNIGIBSON_NO_SIGNALS=1 uv run scripts/train_val.py pi05_single_task_turning_on_radio \
+CUDA_VISIBLE_DEVICES=2,3 XLA_PYTHON_CLIENT_MEM_FRACTION=0.92 OMNIGIBSON_NO_SIGNALS=1 uv run scripts/train_val.py pi05_single_task_ah_512 \
     --exp_name="$EXP_NAME" \
     --overwrite \
     --batch_size=64 \
     --weight_loader.params_path=gs://openpi-assets/checkpoints/pi05_base/params \
     --num_train_steps=50000 \
     --val_log_interval=3000
+
+# # Run this again at some point
+# EXP_NAME="openpi_05_20251110_211927"
+# echo "Experiment name: $EXP_NAME"
+
+# CUDA_VISIBLE_DEVICES=2,3 XLA_PYTHON_CLIENT_MEM_FRACTION=0.92 OMNIGIBSON_NO_SIGNALS=1 uv run scripts/train_val.py pi05_single_task_turning_on_radio \
+#     --exp_name="$EXP_NAME" \
+#     --resume \
+#     --batch_size=64 \
+#     --weight_loader.params_path=gs://openpi-assets/checkpoints/pi05_base/params \
+#     --num_train_steps=50000 \
+#     --val_log_interval=3000

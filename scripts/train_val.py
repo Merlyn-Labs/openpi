@@ -79,6 +79,7 @@ def _prepare_validation_config(
             prompt_from_skill_annotations=False,
             prompt_from_skill_annotations_use_base_prompt_pct=0.0,
             # undersampled_skill_descriptions=None,  # intentionally commented out to use same distribution as training
+            # oversample_boundaries_multiplier=None,  # intentionally commented out to use same distribution as training
             prefer_prompt_from_data=False,
         )
 
