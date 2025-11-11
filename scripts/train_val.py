@@ -79,10 +79,9 @@ def _prepare_validation_config(
             prompt_from_skill_annotations=False,
             prompt_from_skill_annotations_use_base_prompt_pct=0.0,
             prefer_prompt_from_data=False,
-            # the bottom three are intentionally commented out to use same distribution as training
-            # undersampled_skill_descriptions=None,
-            # boundary_oversampling_factor=1,
-            # boundary_window_frames=0,
+            undersampled_skill_descriptions=None,
+            boundary_oversampling_factor=1,
+            boundary_window_frames=0,
         )
 
         return val_config, repo_id, use_norm_stats, actual_val_data_config
