@@ -421,6 +421,7 @@ class LeRobotB1KDataConfig(DataConfigFactory):
                         "observation/state": "observation.state",
                         "actions": "action",
                         "prompt": "prompt",
+                        "task_index": "task_index",
                     }
                 )
             ]

@@ -128,6 +128,7 @@ class Pi0(_model.BaseModel):
 
         # Task embeddings for explicit task conditioning
         if config.num_tasks > 0:
+            logger.info(f"Task embeddings enabled: {config.num_tasks} tasks")
             self.task_embeddings = nnx.Embed(config.num_tasks, action_expert_config.width, rngs=rngs)
 
         # This attribute gets automatically set by model.train() and model.eval().
@@ -199,7 +200,8 @@ class Pi0(_model.BaseModel):
         time_emb = posemb_sincos(timestep, self.action_in_proj.out_features, min_period=4e-3, max_period=4.0)
 
         # Add task embeddings to time conditioning (if enabled and task_id provided)
-        if self.num_tasks > 0 and obs.task_id is not None:
+        if self.num_tasks > 0:
+            assert obs.task_id is not None, "Task ID is required for task embeddings"
             task_emb = self.task_embeddings(obs.task_id)  # [B, emb]
             time_emb = time_emb + self.task_embedding_scale * task_emb
 

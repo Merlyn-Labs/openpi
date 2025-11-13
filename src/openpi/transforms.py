@@ -387,7 +387,8 @@ class ExtractTaskID(DataTransformFn):
 
     def __call__(self, data: DataDict) -> DataDict:
         if "task_index" in data:
-            return {**data, "task_id": np.array([int(data["task_index"])], dtype=np.int32)}
+            # Return scalar - will be batched to shape (B,) by policy.infer()
+            return {**data, "task_id": np.int32(data["task_index"])}
         return data
 
 
