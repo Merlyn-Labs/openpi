@@ -8,6 +8,7 @@ import glob
 from pathlib import Path
 from typing import Set, Dict
 from collections import Counter
+import traceback
 
 def extract_skill_descriptions_with_frames(annotations_dir: str) -> tuple[Set[str], Dict[str, int]]:
     """
@@ -26,10 +27,15 @@ def extract_skill_descriptions_with_frames(annotations_dir: str) -> tuple[Set[st
     skill_string_counts = Counter()
 
     # Find all JSON files matching the pattern
-    pattern = f"{annotations_dir}/task-0000/*.json"
-    json_files = glob.glob(pattern)
+    ACCEPTABLE_TASKS = [26, 15, 14, 42, 44, 36, 3, 25, 34, 6, 13, 40, 49, 16, 1, 2, 22, 8, 30, 38, 39, 0]
+    json_files = []
+    for task_idx in ACCEPTABLE_TASKS:
+        pattern = f"{annotations_dir}/task-{task_idx:04d}/*.json"
+        json_files.extend(glob.glob(pattern))
 
     print(f"Found {len(json_files)} JSON files to process")
+
+    episode_lengths = []
 
     # Process each JSON file
     for file_index, json_file in enumerate(json_files):
@@ -37,14 +43,17 @@ def extract_skill_descriptions_with_frames(annotations_dir: str) -> tuple[Set[st
             with open(json_file, 'r') as f:
                 data = json.load(f)
 
+            task_duration = data['meta_data']['task_duration']
+            episode_lengths.append(task_duration)
+
             # Extract skill descriptions from skill_annotation array
             if 'skill_annotation' in data:
                 # print(f"File Index: {file_index}")
                 # print(len(data['skill_annotation']))
-                full_task_skill_string = "–".join([f"{skill['skill_description'][0]}({', '.join(skill['object_id'][0])})" for skill in data['skill_annotation']])
-                if full_task_skill_string == "move to(door_bexenl_0)–open door(door_bexenl_0)–move to(storage_box_80)–pick up from(storage_box_80, floors_ulujpr_0)–move to(floors_nbxnpk_0)–place on(storage_box_80, floors_nbxnpk_0)–move to(storage_box_79)–pick up from(storage_box_79, floors_ulujpr_0)–move to(storage_box_80)–place on(storage_box_79, floors_nbxnpk_0)":
-                    print(f"PROBLEMATIC FILE: {json_file}")
-                skill_string_counts[full_task_skill_string] += 1
+                # full_task_skill_string = "–".join([f"{skill['skill_description'][0]}({', '.join(skill['object_id'][0])})" for skill in data['skill_annotation']])
+                # if full_task_skill_string == "move to(door_bexenl_0)–open door(door_bexenl_0)–move to(storage_box_80)–pick up from(storage_box_80, floors_ulujpr_0)–move to(floors_nbxnpk_0)–place on(storage_box_80, floors_nbxnpk_0)–move to(storage_box_79)–pick up from(storage_box_79, floors_ulujpr_0)–move to(storage_box_80)–place on(storage_box_79, floors_nbxnpk_0)":
+                #     print(f"PROBLEMATIC FILE: {json_file}")
+                # skill_string_counts[full_task_skill_string] += 1
                 for skill_idx, skill in enumerate(data['skill_annotation']):
                     # print(f"{skill_idx}: {skill['frame_duration'][0]}-{skill['frame_duration'][1]}: {skill['skill_description'][0]}({', '.join(skill['object_id'][0])})")
                     if 'skill_description' in skill:
@@ -75,20 +84,20 @@ def extract_skill_descriptions_with_frames(annotations_dir: str) -> tuple[Set[st
                 print(f"Processed {index} files")
 
         except Exception as e:
-            print(f"Error processing {json_file}: {e}")
+            print(f"Error processing {json_file}: {traceback.format_exc()}")
             continue
 
-    for skill_string, count in skill_string_counts.items():
-        print(f"{skill_string}: {count}")
+    # for skill_string, count in skill_string_counts.items():
+    #     print(f"{skill_string}: {count}")
 
-    return unique_descriptions, frame_counts
+    return unique_descriptions, frame_counts, episode_lengths
 
 
 def main():
     annotations_dir = "/vision/group/behavior/2025-challenge-demos/annotations"
     
     print("Extracting unique skill descriptions...")
-    unique_descriptions, frame_counts = extract_skill_descriptions_with_frames(annotations_dir)
+    unique_descriptions, frame_counts, episode_lengths = extract_skill_descriptions_with_frames(annotations_dir)
     
     print(f"\nFound {len(unique_descriptions)} unique skill descriptions:")
     print("=" * 80)
@@ -106,7 +115,10 @@ def main():
     print("=" * 80)
     print(f"Total: {len(unique_descriptions)} unique skill descriptions")
     print(f"Total frames: {total_frames:,}")
-    
+
+    print(f"Total episode lengths: {sum(episode_lengths):,}")
+    print(f"Average episode length: {sum(episode_lengths) / len(episode_lengths):,.2f}")
+
 #     # Save to file
 #     output_file = "/root/openpi/unique_skill_descriptions.txt"
 #     with open(output_file, 'w') as f:

@@ -1054,6 +1054,78 @@ _CONFIGS = [
     ),
 
     TrainConfig(
+        name="pi05_b1k_22_TASKS_oversample",
+        exp_name="openpi",
+        project_name="B1K",
+        model=pi0_config.Pi0Config(
+            pi05=True,
+            action_horizon=256,
+            paligemma_variant="gemma_2b_lora",
+            loss_weighting_strategy="original",
+            proprio_dropout_dropout_whole_proprio_pct=0.2,
+        ),
+        data=LeRobotB1KDataConfig(
+            repo_id="behavior-1k/2025-challenge-demos",
+            base_config=DataConfig(
+                tasks=[
+                    "assembling_gift_baskets",  # 26
+                    "bringing_in_wood",  # 15
+                    "carrying_in_groceries",  # 14
+                    "chop_an_onion",  # 42
+                    "chopping_wood",  # 44
+                    "clean_a_patio",  # 36
+                    "cleaning_up_plates_and_food",  # 3
+                    "clearing_food_from_table_into_fridge",  # 25
+                    "hanging_pictures",  # 34
+                    "hiding_Easter_eggs",  # 6
+                    "loading_the_car",  # 13
+                    "make_microwave_popcorn",  # 40
+                    "make_pizza",  # 49
+                    "moving_boxes_to_storage",  # 16
+                    "picking_up_trash",  # 1
+                    "putting_away_Halloween_decorations",  # 2
+                    "putting_shoes_on_rack",  # 22
+                    "rearranging_kitchen_furniture",  # 8
+                    "setting_the_fire",  # 30
+                    "spraying_for_bugs",  # 38
+                    "spraying_fruit_trees",  # 39
+                    "turning_on_radio",  # 0
+                ],
+                prompt_from_task=True,
+                prompt_from_skill_annotations=False,
+                prompt_from_skill_annotations_use_base_prompt_pct=1.0,
+                proprio_dropout_dropout_whole_proprio_pct=0.6,
+                proprio_dropout_proprio_groups=[],
+                episodes_index=list(range(190)),
+                resampled_skill_descriptions=None,
+                boundary_oversampling_factor=2,
+                boundary_window_frames=50,
+                behavior_dataset_root="/vision/group/behavior/2025-challenge-demos",
+                prefer_prompt_from_data=False,
+            ),
+        ),
+        weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
+        num_train_steps=100_000,
+        freeze_filter=pi0_config.Pi0Config(
+            pi05=True, action_horizon=256, paligemma_variant="gemma_2b_lora"
+        ).get_freeze_filter(),
+        lr_schedule=_optimizer.CosineDecaySchedule(
+            warmup_steps=2_000,
+            peak_lr=2e-5,
+            decay_steps=100_000,
+            decay_lr=2e-6,
+        ),
+        # The learning rate will be 1e-6 at the end of training (step 50,000).
+        ema_decay=None,
+        val_log_interval=5000,
+        val_repo_id="behavior-1k/2025-challenge-demos",
+        val_episodes_index=list(range(190, 200)),
+        assets_base_dir="./outputs/assets",
+        checkpoint_base_dir="./outputs/checkpoints",
+        num_workers=32,
+    ),
+
+    TrainConfig(
         name="pi05_b1k_loading_the_car_boundaries_but_less",
         exp_name="openpi",
         project_name="B1K",

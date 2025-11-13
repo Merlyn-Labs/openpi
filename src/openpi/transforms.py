@@ -310,21 +310,22 @@ class ExtractFASTActions(DataTransformFn):
 
 
 def prefix_task_index_to_prompt(task_index: int, prompt: str) -> str:
-    return f"[task-{task_index:04d}]: {prompt}"
+    return f"[task-{task_index:02d}]: {prompt}"
 
 
 def get_prompt_from_task_or_data(data: int, tasks: dict[int, str], prefer_prompt_from_data: bool = False) -> str:
-    if "prompt" in data and prefer_prompt_from_data:
-        return data["prompt"]
-
     if "task_index" not in data:
         raise ValueError('Cannot extract prompt without "task_index"')
 
     task_index = int(data["task_index"])
+
+    if "prompt" in data and prefer_prompt_from_data:
+        return prefix_task_index_to_prompt(task_index, data["prompt"])
+
     if (prompt := tasks.get(task_index)) is None:
         raise ValueError(f"{task_index=} not found in task mapping: {tasks}")
 
-    return prompt
+    return prefix_task_index_to_prompt(task_index, prompt)
 
 
 @dataclasses.dataclass(frozen=True)
