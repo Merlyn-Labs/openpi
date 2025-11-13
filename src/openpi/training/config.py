@@ -155,6 +155,7 @@ class ModelTransformFactory(GroupFactory):
                     inputs=[
                         _transforms.InjectDefaultPrompt(self.default_prompt),
                         _transforms.ResizeImages(224, 224),
+                        _transforms.ExtractTaskID(),
                         _transforms.ProprioDropout(
                             dropout_whole_proprio_pct=proprio_dropout_percent,
                             proprio_groups=[],
@@ -171,6 +172,7 @@ class ModelTransformFactory(GroupFactory):
                     inputs=[
                         _transforms.InjectDefaultPrompt(self.default_prompt),
                         _transforms.ResizeImages(224, 224),
+                        _transforms.ExtractTaskID(),
                         _transforms.ProprioDropout(
                             dropout_whole_proprio_pct=proprio_dropout_percent,
                             proprio_groups=[],
