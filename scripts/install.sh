@@ -12,3 +12,6 @@ source .venv/bin/activate
 cd /workspace/BEHAVIOR-1K/
 uv pip install -e bddl
 uv pip install -e OmniGibson[eval]
+
+cd /workspace/openpi/
+bash scripts/download_dataset.sh
