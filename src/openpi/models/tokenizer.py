@@ -43,11 +43,11 @@ class PaligemmaTokenizer:
             mask = [True] * tokens_len + padding
             tokens = tokens + padding
         else:
-            if len(tokens) > self._max_len:
-                logging.warning(
-                    f"Token length ({len(tokens)}) exceeds max length ({self._max_len}), truncating. "
-                    "Consider increasing the `max_token_len` in your model config if this happens frequently."
-                )
+            # if len(tokens) > self._max_len:
+            #     logging.warning(
+            #         f"Token length ({len(tokens)}) exceeds max length ({self._max_len}), truncating. "
+            #         "Consider increasing the `max_token_len` in your model config if this happens frequently."
+            #     )
             tokens = tokens[: self._max_len]
             mask = [True] * self._max_len
 
