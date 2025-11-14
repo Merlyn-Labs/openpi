@@ -1066,7 +1066,25 @@ _CONFIGS = [
             pi05=True,
             action_horizon=128,
             paligemma_variant="gemma_2b_lora_32",
-            loss_weighting_strategy="uniform",
+            loss_weighting_strategy="per_group",
+            action_groups={
+                "base": (0, 3),             # base x-y-theta velocity
+                "trunk": (3, 7),            # trunk joints
+                "left_arm": (7, 14),        # left arm joints
+                "left_gripper": (14, 15),   # left gripper width
+                "right_arm": (15, 22),      # right arm joints
+                "right_gripper": (22, 23),  # right gripper width
+                "padding": (23, 32),        # padding dimensions
+            },
+            group_weights={
+                "base": 1.0,       # Reduce base importance
+                "trunk": 2.0,
+                "left_arm": 3.0,   # 3x more than base!
+                "left_gripper": 3.0,
+                "right_arm": 3.0,
+                "right_gripper": 3.0,
+                "padding": 0.0,
+            },
             proprio_dropout_dropout_whole_proprio_pct=0.2,
             num_tasks=50,
             task_embedding_scale=1.5,
