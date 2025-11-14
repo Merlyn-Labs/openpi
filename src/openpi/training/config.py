@@ -592,6 +592,8 @@ class TrainConfig:
     num_workers: int = 2
     # Number of train steps (batches) to run.
     num_train_steps: int = 30_000
+    # If true, will restart the data loader from the beginning.
+    restart_data: bool = False
 
     # How often (in steps) to log training metrics.
     log_interval: int = 100
@@ -1102,8 +1104,14 @@ _CONFIGS = [
                 proprio_dropout_dropout_whole_proprio_pct=0.1,
                 proprio_dropout_proprio_groups=[],
                 episodes_index=list(range(190)),
-                resampled_skill_descriptions=None,
-                boundary_oversampling_factor=2,
+                resampled_skill_descriptions={
+                    "move to": 0.8,
+                    "pick up from": 2,
+                    "place in": 4,
+                    "open door": 5,
+                    "place on": 5,
+                },
+                boundary_oversampling_factor=3,
                 boundary_window_frames=30,
                 behavior_dataset_root="/vision/group/behavior/2025-challenge-demos",
                 prefer_prompt_from_data=False,
@@ -1127,7 +1135,7 @@ _CONFIGS = [
         val_episodes_index=list(range(190, 200)),
         assets_base_dir="./outputs/assets",
         checkpoint_base_dir="./outputs/checkpoints",
-        num_workers=64,
+        num_workers=16,
     ),
 
     TrainConfig(
