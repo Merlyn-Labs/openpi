@@ -157,18 +157,22 @@ def create_behavior_dataset(
 
     # Prefer skill annotations when requested; otherwise fall back to task->prompt mapping.
     if data_config.prompt_from_skill_annotations:
-        dataset = TransformedDataset(dataset, [_transforms.PromptFromSkillAnnotations(
-            dataset.meta.tasks,
-            use_base_prompt_pct=data_config.prompt_from_skill_annotations_use_base_prompt_pct,
-            prefer_prompt_from_data=data_config.prefer_prompt_from_data,
-        )])
+        dataset = TransformedDataset(dataset, [
+            _transforms.PromptFromSkillAnnotations(
+                dataset.meta.tasks,
+                use_base_prompt_pct=data_config.prompt_from_skill_annotations_use_base_prompt_pct,
+                prefer_prompt_from_data=data_config.prefer_prompt_from_data,
+            ),
+            _transforms.ExtractTaskID(),
+        ])
     elif data_config.prompt_from_task:
-        dataset = TransformedDataset(dataset, [_transforms.PromptFromLeRobotTask(
-            dataset.meta.tasks,
-            prefer_prompt_from_data=data_config.prefer_prompt_from_data,
-        )])
-
-    dataset = TransformedDataset(dataset, [_transforms.ExtractTaskID()])
+        dataset = TransformedDataset(dataset, [
+            _transforms.PromptFromLeRobotTask(
+                dataset.meta.tasks,
+                prefer_prompt_from_data=data_config.prefer_prompt_from_data,
+            ),
+            _transforms.ExtractTaskID(),
+        ])
 
     return dataset
 

@@ -1096,10 +1096,10 @@ _CONFIGS = [
                     "spraying_fruit_trees",  # 39
                     "turning_on_radio",  # 0
                 ],
-                prompt_from_task=True,
-                prompt_from_skill_annotations=False,
-                prompt_from_skill_annotations_use_base_prompt_pct=1.0,
-                proprio_dropout_dropout_whole_proprio_pct=0.6,
+                prompt_from_task=False,
+                prompt_from_skill_annotations=True,
+                prompt_from_skill_annotations_use_base_prompt_pct=0.7,
+                proprio_dropout_dropout_whole_proprio_pct=0.2,
                 proprio_dropout_proprio_groups=[],
                 episodes_index=list(range(190)),
                 resampled_skill_descriptions=None,

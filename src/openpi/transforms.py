@@ -378,7 +378,8 @@ class PromptFromSkillAnnotations(DataTransformFn):
         if prompt_idx is None:
             return {**data, "prompt": get_prompt_from_task_or_data(data, self.tasks, self.prefer_prompt_from_data)}
         else:
-            return {**data, "prompt": skill_prompts[prompt_idx]["prompt"]}
+            task_index = int(data["task_index"])
+            return {**data, "prompt": prefix_task_index_to_prompt(task_index, skill_prompts[prompt_idx]["prompt"])}
 
 
 @dataclasses.dataclass(frozen=True)
