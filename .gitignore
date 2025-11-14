@@ -169,3 +169,4 @@ cython_debug/
 #.idea/
 
 streamlit_venv/
+vision-group.tar.gz

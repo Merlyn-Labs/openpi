@@ -1019,7 +1019,8 @@ _CONFIGS = [
             repo_id="behavior-1k/2025-challenge-demos",
             base_config=DataConfig(
                 tasks=[
-                    "moving_boxes_to_storage",  # 16
+                    # "moving_boxes_to_storage",  # 16
+                    "turning_on_radio",  # 0
                 ],
                 prompt_from_task=True,
                 prompt_from_skill_annotations=False,
@@ -1028,12 +1029,16 @@ _CONFIGS = [
                 proprio_dropout_proprio_groups=[],
                 episodes_index=(list(range(182)) + list(range(183, 190))),
                 resampled_skill_descriptions={
-                    "move to": 1,
-                    "pick up from": 3,
-                    "place on": 3,
-                    "open door": 8,
+                    "pick up from": 2,
+                    "move to": 3,
+                    "place on": 4,
+                    "open door": 5,
                 },
+<<<<<<< Updated upstream
                 boundary_oversampling_factor=3,
+=======
+                boundary_oversampling_factor=4,
+>>>>>>> Stashed changes
                 boundary_window_frames=50,
                 behavior_dataset_root="/vision/group/behavior/2025-challenge-demos",
                 prefer_prompt_from_data=False,
