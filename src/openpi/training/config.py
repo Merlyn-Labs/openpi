@@ -1034,11 +1034,7 @@ _CONFIGS = [
                     "place on": 4,
                     "open door": 5,
                 },
-<<<<<<< Updated upstream
-                boundary_oversampling_factor=3,
-=======
                 boundary_oversampling_factor=4,
->>>>>>> Stashed changes
                 boundary_window_frames=50,
                 behavior_dataset_root="/vision/group/behavior/2025-challenge-demos",
                 prefer_prompt_from_data=False,
