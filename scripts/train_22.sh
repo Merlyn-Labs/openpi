@@ -4,8 +4,8 @@
 EXP_NAME="openpi_05_20251113_045215"
 echo "Experiment name: $EXP_NAME"
 
-# CKPT_TO_CONTINUE="outputs/checkpoints/pi05_b1k_22_TASKS_oversample/openpi_05_20251113_045215/17000"
-# aws s3 sync s3://behavior-challenge/$CKPT_TO_CONTINUE $CKPT_TO_CONTINUE
+CKPT_TO_CONTINUE="outputs/checkpoints/pi05_b1k_22_TASKS_oversample/openpi_05_20251113_045215/83000"
+aws s3 sync s3://behavior-challenge/$CKPT_TO_CONTINUE $CKPT_TO_CONTINUE
 
 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 XLA_PYTHON_CLIENT_MEM_FRACTION=0.92 OMNIGIBSON_NO_SIGNALS=1 uv run scripts/train_val.py pi05_b1k_22_TASKS_oversample \
     --exp_name="$EXP_NAME" \

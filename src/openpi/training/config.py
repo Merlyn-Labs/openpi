@@ -1062,12 +1062,12 @@ _CONFIGS = [
         project_name="B1K",
         model=pi0_config.Pi0Config(
             pi05=True,
-            action_horizon=256,
+            action_horizon=128,
             paligemma_variant="gemma_2b_lora_32",
             loss_weighting_strategy="uniform",
             proprio_dropout_dropout_whole_proprio_pct=0.2,
             num_tasks=50,
-            task_embedding_scale=1.0,
+            task_embedding_scale=1.5,
         ),
         data=LeRobotB1KDataConfig(
             repo_id="behavior-1k/2025-challenge-demos",
@@ -1112,14 +1112,14 @@ _CONFIGS = [
         weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
         num_train_steps=261_000,
         freeze_filter=pi0_config.Pi0Config(
-            pi05=True, action_horizon=256, paligemma_variant="gemma_2b_lora_32"
+            pi05=True, action_horizon=128, paligemma_variant="gemma_2b_lora_32"
         ).get_freeze_filter(),
         # The learning rate will be 1e-6 at the end of training (step 500,000).
         lr_schedule=_optimizer.CosineDecaySchedule(
             warmup_steps=5_000,
-            peak_lr=1e-6,
+            peak_lr=5e-6,
             decay_steps=261_000,
-            decay_lr=1e-7,
+            decay_lr=5e-7,
         ),
         ema_decay=None,
         val_log_interval=5000,
