@@ -127,9 +127,9 @@ class Pi0(_model.BaseModel):
         self.action_out_proj = nnx.Linear(action_expert_config.width, config.action_dim, rngs=rngs)
 
         # Task embeddings for explicit task conditioning
-        if config.num_tasks > 0:
-            logger.info(f"Task embeddings enabled: {config.num_tasks} tasks")
-            self.task_embeddings = nnx.Embed(config.num_tasks, action_expert_config.width, rngs=rngs)
+        if self.num_tasks > 0:
+            logger.info(f"Task embeddings enabled: {self.num_tasks} tasks, scale={config.task_embedding_scale}")
+            self.task_embeddings = nnx.Embed(self.num_tasks, action_expert_config.width, rngs=rngs)
 
         # This attribute gets automatically set by model.train() and model.eval().
         self.deterministic = True

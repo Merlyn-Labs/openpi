@@ -482,7 +482,10 @@ def main(config: _config.TrainConfig):
 
     start_step = int(train_state.step)
     batch_size = config.batch_size
-    num_datapoints_seen = start_step * batch_size
+    if config.restart_data:
+        num_datapoints_seen = 0
+    else:
+        num_datapoints_seen = start_step * batch_size
     logging.info(f"Starting from step {start_step} with {num_datapoints_seen} datapoints seen")
     data_loader = _data_loader.create_behavior_data_loader(
         config,

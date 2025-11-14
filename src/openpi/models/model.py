@@ -178,15 +178,32 @@ def preprocess_observation(
 
             transforms = []
             if "wrist" not in key:
+                # Base/head camera: more aggressive augmentation for better generalization
                 height, width = image.shape[1:3]
                 transforms += [
+                    # More aggressive cropping for viewpoint robustness (90% vs original 95%)
+                    augmax.RandomCrop(int(width * 0.90), int(height * 0.90)),
+                    augmax.Resize(width, height),
+                    # Larger rotation range for BEHAVIOR's diverse camera angles (10° vs original 5°)
+                    augmax.Rotate((-10, 10)),
+                ]
+            else:
+                # Wrist cameras: now also include spatial augmentation (previously had none)
+                height, width = image.shape[1:3]
+                transforms += [
+                    # Moderate crop for wrist cameras (close-up views are more sensitive)
                     augmax.RandomCrop(int(width * 0.95), int(height * 0.95)),
                     augmax.Resize(width, height),
+                    # Small rotation for wrist camera robustness
                     augmax.Rotate((-5, 5)),
                 ]
+
+            # Color augmentations for all cameras (lighting robustness)
+            # More aggressive than original (brightness 0.4 vs 0.3, contrast 0.5 vs 0.4, added hue)
             transforms += [
-                augmax.ColorJitter(brightness=0.3, contrast=0.4, saturation=0.5),
+                augmax.ColorJitter(brightness=0.4, contrast=0.5, saturation=0.5, hue=0.05),
             ]
+            
             sub_rngs = jax.random.split(rng, image.shape[0])
             image = jax.vmap(augmax.Chain(*transforms))(sub_rngs, image)
 
