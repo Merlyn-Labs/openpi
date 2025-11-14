@@ -1009,9 +1009,11 @@ _CONFIGS = [
         model=pi0_config.Pi0Config(
             pi05=True,
             action_horizon=256,
-            paligemma_variant="gemma_2b_lora",
+            paligemma_variant="gemma_2b_lora_32",
             loss_weighting_strategy="original",
             proprio_dropout_dropout_whole_proprio_pct=0.2,
+            num_tasks=50,
+            task_embedding_scale=1.5,
         ),
         data=LeRobotB1KDataConfig(
             repo_id="behavior-1k/2025-challenge-demos",
@@ -1022,7 +1024,7 @@ _CONFIGS = [
                 prompt_from_task=True,
                 prompt_from_skill_annotations=False,
                 prompt_from_skill_annotations_use_base_prompt_pct=1.0,
-                proprio_dropout_dropout_whole_proprio_pct=0.6,
+                proprio_dropout_dropout_whole_proprio_pct=0.1,
                 proprio_dropout_proprio_groups=[],
                 episodes_index=(list(range(182)) + list(range(183, 190))),
                 resampled_skill_descriptions={
@@ -1031,22 +1033,22 @@ _CONFIGS = [
                     "place on": 3,
                     "open door": 8,
                 },
-                boundary_oversampling_factor=2,
+                boundary_oversampling_factor=3,
                 boundary_window_frames=50,
                 behavior_dataset_root="/vision/group/behavior/2025-challenge-demos",
                 prefer_prompt_from_data=False,
             ),
         ),
         weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
-        num_train_steps=50_000,
+        num_train_steps=75_000,
         freeze_filter=pi0_config.Pi0Config(
-            pi05=True, action_horizon=256, paligemma_variant="gemma_2b_lora"
+            pi05=True, action_horizon=256, paligemma_variant="gemma_2b_lora_32"
         ).get_freeze_filter(),
         lr_schedule=_optimizer.CosineDecaySchedule(
-            warmup_steps=2_000,
-            peak_lr=2e-5,
-            decay_steps=100_000,
-            decay_lr=2e-6,
+            warmup_steps=5_000,
+            peak_lr=5e-6,
+            decay_steps=75_000,
+            decay_lr=5e-7,
         ),
         # The learning rate will be 1e-6 at the end of training (step 50,000).
         ema_decay=None,
