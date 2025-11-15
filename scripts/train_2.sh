@@ -1,24 +1,16 @@
 #!/bin/bash
 
+CHECKPOINT_FOLDER=outputs/checkpoints/pi05_b1k_22_TASKS_oversample/openpi_05_20251113_045215/81000/
+S3_CHECKPOINT_FOLDER=s3://behavior-challenge/$CHECKPOINT_FOLDER
+aws s3 sync "$S3_CHECKPOINT_FOLDER" "$CHECKPOINT_FOLDER"
+
 EXP_NAME="openpi_05_$(date +%Y%m%d_%H%M%S)"
 echo "Experiment name: $EXP_NAME"
 
-CUDA_VISIBLE_DEVICES=2,3 XLA_PYTHON_CLIENT_MEM_FRACTION=0.92 OMNIGIBSON_NO_SIGNALS=1 uv run scripts/train_val.py pi05_single_task_ah_512 \
+CUDA_VISIBLE_DEVICES=4,5,6,7 XLA_PYTHON_CLIENT_MEM_FRACTION=0.92 OMNIGIBSON_NO_SIGNALS=1 uv run scripts/train_val.py pi05_b1k_oversample_mbts \
     --exp_name="$EXP_NAME" \
     --overwrite \
     --batch_size=64 \
-    --weight_loader.params_path=gs://openpi-assets/checkpoints/pi05_base/params \
-    --num_train_steps=50000 \
+    --weight_loader.params_path="$CHECKPOINT_FOLDER/params" \
+    --num_train_steps=100000 \
     --val_log_interval=3000
-
-# # Run this again at some point for completing turn on radio task
-# EXP_NAME="openpi_05_20251110_211927"
-# echo "Experiment name: $EXP_NAME"
-
-# CUDA_VISIBLE_DEVICES=2,3 XLA_PYTHON_CLIENT_MEM_FRACTION=0.92 OMNIGIBSON_NO_SIGNALS=1 uv run scripts/train_val.py pi05_single_task_turning_on_radio \
-#     --exp_name="$EXP_NAME" \
-#     --resume \
-#     --batch_size=64 \
-#     --weight_loader.params_path=gs://openpi-assets/checkpoints/pi05_base/params \
-#     --num_train_steps=50000 \
-#     --val_log_interval=3000
