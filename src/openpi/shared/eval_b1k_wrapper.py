@@ -7,6 +7,7 @@ from openpi_client.base_policy import BasePolicy
 from openpi_client.image_tools import resize_with_pad
 from collections import deque
 import copy
+import traceback
 
 RESIZE_SIZE = 224
 
@@ -97,7 +98,7 @@ class B1KPolicyWrapper():
             if nbatch["observation"].shape[-1] != 3:
                 nbatch["observation"] = np.transpose(nbatch["observation"], (0, 1, 3, 4, 2))
 
-            joint_positions = nbatch["proprio"][0, -1]
+            joint_positions = nbatch["proprio"][0]
             batch = {
                 "observation/egocentric_camera": nbatch["observation"][0, 0],
                 "observation/wrist_image_left": nbatch["observation"][0, 1],
@@ -112,7 +113,7 @@ class B1KPolicyWrapper():
                 self.last_action = action
             except Exception as e:
                 action = self.last_action
-                print(f"Error in action prediction, using last action: {e}")
+                print(f"Error in action prediction, using last action: {traceback.format_exc()}")
 
             target_joint_positions = action["actions"].copy()
 
