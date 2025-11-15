@@ -92,8 +92,6 @@ class Pi0(_model.BaseModel):
         logger.info(f"Loss weighting strategy: {self.loss_weighting_strategy}")
         logger.info(f"Action groups: {self.action_groups}")
         logger.info(f"Group weights: {self.group_weights}")
-        if self.num_tasks > 0:
-            logger.info(f"Task embeddings enabled: {self.num_tasks} tasks, scale={self.task_embedding_scale}")
         paligemma_config = _gemma.get_config(config.paligemma_variant)
         action_expert_config = _gemma.get_config(config.action_expert_variant)
         # TODO: rewrite gemma in NNX. For now, use bridge.

@@ -1005,14 +1005,32 @@ _CONFIGS = [
     ),
 
     TrainConfig(
-        name="pi05_b1k_oversample",
+        name="pi05_b1k_oversample_mbts",
         exp_name="openpi",
         project_name="B1K",
         model=pi0_config.Pi0Config(
             pi05=True,
             action_horizon=256,
             paligemma_variant="gemma_2b_lora_32",
-            loss_weighting_strategy="original",
+            loss_weighting_strategy="per_group",
+            action_groups={
+                "base": (0, 3),             # base x-y-theta velocity
+                "trunk": (3, 7),            # trunk joints
+                "left_arm": (7, 14),        # left arm joints
+                "left_gripper": (14, 15),   # left gripper width
+                "right_arm": (15, 22),      # right arm joints
+                "right_gripper": (22, 23),  # right gripper width
+                "padding": (23, 32),        # padding dimensions
+            },
+            group_weights={
+                "base": 1.0,       # Reduce base importance
+                "trunk": 1.7,
+                "left_arm": 2.0,   # 3x more than base!
+                "left_gripper": 2.0,
+                "right_arm": 2.0,
+                "right_gripper": 2.0,
+                "padding": 0.0,
+            },
             proprio_dropout_dropout_whole_proprio_pct=0.2,
             num_tasks=50,
             task_embedding_scale=1.5,
@@ -1021,13 +1039,13 @@ _CONFIGS = [
             repo_id="behavior-1k/2025-challenge-demos",
             base_config=DataConfig(
                 tasks=[
-                    # "moving_boxes_to_storage",  # 16
-                    "turning_on_radio",  # 0
+                    "moving_boxes_to_storage",  # 16
+                    # "turning_on_radio",  # 0
                 ],
                 prompt_from_task=True,
                 prompt_from_skill_annotations=False,
                 prompt_from_skill_annotations_use_base_prompt_pct=1.0,
-                proprio_dropout_dropout_whole_proprio_pct=0.1,
+                proprio_dropout_dropout_whole_proprio_pct=0.0,
                 proprio_dropout_proprio_groups=[],
                 episodes_index=(list(range(182)) + list(range(183, 190))),
                 resampled_skill_descriptions={
@@ -1043,14 +1061,14 @@ _CONFIGS = [
             ),
         ),
         weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
-        num_train_steps=75_000,
+        num_train_steps=100_000,
         freeze_filter=pi0_config.Pi0Config(
             pi05=True, action_horizon=256, paligemma_variant="gemma_2b_lora_32"
         ).get_freeze_filter(),
         lr_schedule=_optimizer.CosineDecaySchedule(
             warmup_steps=5_000,
             peak_lr=5e-6,
-            decay_steps=75_000,
+            decay_steps=100_000,
             decay_lr=5e-7,
         ),
         # The learning rate will be 1e-6 at the end of training (step 50,000).
