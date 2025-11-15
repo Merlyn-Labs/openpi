@@ -94,7 +94,6 @@ class B1KPolicyWrapper():
         if self.step_counter % self.replan_interval == 0:
             # Run policy every K steps
             nbatch = copy.deepcopy(input_obs)
-            nbatch["observation"] = nbatch["observation"][:, -1]
             if nbatch["observation"].shape[-1] != 3:
                 nbatch["observation"] = np.transpose(nbatch["observation"], (0, 1, 3, 4, 2))
 
