@@ -199,7 +199,7 @@ def compute_weighted_loss(
             group_weights=group_weights,
             use_delta_weighting=use_delta_weighting,
         )  # [B, H, D]
-        return jnp.sum(base_loss * dim_weights, axis=-1)  # [B, H]
+        return jnp.mean(base_loss * dim_weights, axis=-1)  # [B, H]
     
     elif weighting_strategy == "per_dimension":
         # Simple: fixed weights per dimension
@@ -207,7 +207,7 @@ def compute_weighted_loss(
             actions,
             dimension_weights=dimension_weights,
         )  # [B, H, D]
-        return jnp.sum(base_loss * dim_weights, axis=-1)  # [B, H]
+        return jnp.mean(base_loss * dim_weights, axis=-1)  # [B, H]
     
     elif weighting_strategy == "uniform":
         # No weighting: treat all dimensions equally
