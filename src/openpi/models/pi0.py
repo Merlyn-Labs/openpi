@@ -292,7 +292,6 @@ class Pi0(_model.BaseModel):
         # note that we use the convention more common in diffusion literature, where t=1 is noise and t=0 is the target
         # distribution. yes, this is the opposite of the pi0 paper, and I'm sorry.
         dt = -1.0 / num_steps
-        print(f"num_steps={num_steps}")
         batch_size = observation.state.shape[0]
         if noise is None:
             noise = jax.random.normal(rng, (batch_size, self.action_horizon, self.action_dim))
@@ -305,7 +304,6 @@ class Pi0(_model.BaseModel):
 
         def step(carry):
             x_t, time = carry
-            print(f"x_t.shape={x_t.shape}, time={time.shape}")
             suffix_tokens, suffix_mask, suffix_ar_mask, adarms_cond = self.embed_suffix(
                 observation, x_t, jnp.broadcast_to(time, batch_size)
             )
