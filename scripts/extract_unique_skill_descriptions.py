@@ -49,7 +49,7 @@ def extract_skill_descriptions_with_frames(annotations_dir: str) -> tuple[Set[st
 
     # Find all JSON files matching the pattern
     # ACCEPTABLE_TASKS = [26, 15, 14, 42, 44, 36, 3, 25, 34, 6, 13, 40, 49, 16, 1, 2, 22, 8, 30, 38, 39, 0]
-    ACCEPTABLE_TASKS = [15]
+    ACCEPTABLE_TASKS = [1]
     json_files = []
     task_to_files = {}  # Track which files belong to which task
     for task_idx in ACCEPTABLE_TASKS:
