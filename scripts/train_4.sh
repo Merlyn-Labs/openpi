@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CHECKPOINT_FOLDER=outputs/checkpoints/pi05_b1k_22_TASKS_oversample/openpi_05_20251113_045215/66000/
+CHECKPOINT_FOLDER=outputs/checkpoints/pi05_b1k_22_TASKS_oversample/openpi_05_20251113_045215/66000
 S3_CHECKPOINT_FOLDER=s3://behavior-challenge/$CHECKPOINT_FOLDER
 aws s3 sync "$S3_CHECKPOINT_FOLDER" "$CHECKPOINT_FOLDER"
 
