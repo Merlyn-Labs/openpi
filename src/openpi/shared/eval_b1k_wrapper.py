@@ -41,6 +41,13 @@ class B1KPolicyWrapper():
         self.step_counter = 0
 
         self.configs = {
+            "coarse_lower_horizon": {
+                "control_mode": "receeding_horizon",
+                "max_len": 50,
+                "action_horizon": 50,
+                "temporal_ensemble_max": 1,
+                "exp_k_value": 1.0,
+            },
             "coarse": {
                 "control_mode": "receeding_horizon",
                 "max_len": 100,
@@ -53,7 +60,7 @@ class B1KPolicyWrapper():
                 "max_len": 72,
                 "action_horizon": 12,
                 "temporal_ensemble_max": 6,
-                "exp_k_value": 0.005,  # TODO: SHOULD THIS BE 1 OR PUT IT BACK TO 0.005 now?
+                "exp_k_value": 0.005,
             },
             "fine_higher_k": {
                 "control_mode": "receeding_temporal",
@@ -82,12 +89,12 @@ class B1KPolicyWrapper():
         }
 
         self.task_idx_config_type_map = {
-            0: "coarse",  # turning_on_radio was eval'd with RH 50
-            15: "coarse",  # bringing_in_wood should be better with RH, but we got 0.0 anyway
-            13: "coarse",  # loading_the_car should be better with RH, but we got 0.0 anyway
-            16: "coarse",  # moving_boxes_to_storage was submitted with RH 50, so that's what we'll keep
-            22: "fine_higher_k",  # putting_shoes_on_rack was better with receeding_temporal with k=0.5
-        }  # For everything else, we'll default to `fine` which is receeding_temporal with k=0.005
+            0: "coarse",                 # turning_on_radio was eval'd with RH 50, so that's what we'll keep
+            15: "coarse",                # bringing_in_wood should be better with RH, but we got 0.0 anyway
+            13: "coarse",                # loading_the_car should be better with RH, but we got 0.0 anyway
+            16: "coarse_lower_horizon",  # moving_boxes_to_storage was submitted with RH 50, so that's what we'll keep
+            22: "fine_higher_k",         # putting_shoes_on_rack was better with receeding_temporal with k=0.5
+        }                                # For everything else, we'll default to `fine` which is receeding_temporal with k=0.005
 
         dataset_root = config.data.base_config.behavior_dataset_root
         self.task_prompt_map = {}
