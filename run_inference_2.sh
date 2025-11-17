@@ -2,10 +2,10 @@
 
 export CUDA_VISIBLE_DEVICES=5;
 
-export TRAIN_CONFIG_NAME="pi05_b1k_oversample_psor";
-export CKPT_NAME="psor_openpi_05_20251116_062730";
-export STEP_COUNT=27000;
-export TASK_NAME="putting_shoes_on_rack";
+export TRAIN_CONFIG_NAME="pi05_b1k_oversample_ltc";
+export CKPT_NAME="ltc_openpi_05_20251116_073405";
+export STEP_COUNT=15000;
+export TASK_NAME="loading_the_car";
 
 # export CONTROL_MODE="receeding_horizon";
 # export MAX_LEN=100;
@@ -17,7 +17,11 @@ export CONTROL_MODE="receeding_temporal";
 export MAX_LEN=72;
 export ACTION_HORIZON=12;
 export TEMPORAL_ENSEMBLE_MAX=6;
-export EXP_K_VALUE=0.8;
+export EXP_K_VALUE=1.0;
+
+aws s3 sync \
+    s3://behavior-challenge/outputs/checkpoints/${TRAIN_CONFIG_NAME}/${CKPT_NAME}/${STEP_COUNT}/ \
+    /workspace/openpi/outputs/checkpoints/${TRAIN_CONFIG_NAME}/${CKPT_NAME}/${STEP_COUNT}/
 
 # conda activate behavior
 kill $(lsof -ti:8001)
