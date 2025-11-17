@@ -140,8 +140,8 @@ class B1KPolicyWrapper():
         self.action_queue = deque([q for q in self.action_queue if len(q) > 0])
 
         # Apply temporal ensemble
-        k = 0.005
-        exp_weights = np.exp(k * np.arange(actions_current_timestep.shape[0]))
+        print(f"self.exp_k_value: {self.exp_k_value}")
+        exp_weights = np.exp(self.exp_k_value * np.arange(actions_current_timestep.shape[0]))
         exp_weights = exp_weights / exp_weights.sum()
 
         final_action = (actions_current_timestep * exp_weights[:, None]).sum(axis=0)
@@ -236,12 +236,10 @@ class B1KPolicyWrapper():
             self.action_queue.append(new_actions)
             actions_current_timestep = np.empty((len(self.action_queue), target_joint_positions.shape[1]))
             
-            # k = 0.01
-            k = 0.005
             for i, q in enumerate(self.action_queue):
                 actions_current_timestep[i] = q.popleft()
 
-            exp_weights = np.exp(k * np.arange(actions_current_timestep.shape[0]))
+            exp_weights = np.exp(self.exp_k_value * np.arange(actions_current_timestep.shape[0]))
             exp_weights = exp_weights / exp_weights.sum()
             # breakpoint()
 
