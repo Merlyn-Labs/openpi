@@ -225,6 +225,7 @@ class B1KPolicyWrapper():
         # Need to broadcast joint_positions to match action sequence length
         target_joint_positions = action["actions"].copy() 
         if self.control_mode == 'receeding_horizon':
+            # print(f"target_joint_positions shape: {target_joint_positions.shape}")
             self.action_queue = deque([a for a in target_joint_positions[:self.max_len]])
             final_action = self.action_queue.popleft()[None]
 
