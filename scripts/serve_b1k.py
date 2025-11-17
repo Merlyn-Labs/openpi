@@ -62,6 +62,13 @@ class Args:
     # Specifies how to load the policy. If not provided, the default policy for the environment will be used.
     policy: Checkpoint | Default = dataclasses.field(default_factory=Default)
 
+    # Control mode
+    control_mode: str = "receeding_temporal"
+    max_len: int = 72
+    action_horizon: int = 12
+    temporal_ensemble_max: int = 6
+    exp_k_value: float = 1.0
+
 
 def create_policy(args: Args, config: _config.TrainConfig) -> _policy.Policy:
     """Create a policy from the given arguments."""
@@ -79,7 +86,7 @@ def main(args: Args) -> None:
     if args.record:
         policy = _policy.PolicyRecorder(policy, "policy_records")
 
-    policy = B1KPolicyWrapper(policy, config=config, text_prompt="Hello, world!")
+    policy = B1KPolicyWrapper(policy, config=config, text_prompt="Hello, world!", control_mode=args.control_mode, max_len=args.max_len, action_horizon=args.action_horizon, temporal_ensemble_max=args.temporal_ensemble_max, exp_k_value=args.exp_k_value)
 
     hostname = socket.gethostname()
     local_ip = socket.gethostbyname(hostname)
