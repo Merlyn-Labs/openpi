@@ -551,6 +551,12 @@ def convert_pi0_checkpoint(
     with open(os.path.join(output_path, "config.json"), "w") as f:
         json.dump(config_dict, f, indent=2)
 
+    # Copy normalization statistics if present
+    norm_stats_src = pathlib.Path(checkpoint_dir) / "assets" / "behavior-1k" / "2025-challenge-demos" / "norm_stats.json"
+    norm_stats_dest = pathlib.Path(output_path) / "assets" / "behavior-1k" / "2025-challenge-demos" / "norm_stats.json"
+    if norm_stats_src.exists():
+        shutil.copyfile(norm_stats_src, norm_stats_dest)
+
     print("Model conversion completed successfully!")
     print(f"Model saved to {output_path}")
 
