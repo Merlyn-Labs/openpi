@@ -185,7 +185,6 @@ class OGB1KPolicyWrapper():
             Dtype: float64
             Shape: (10, 16)
         """
-        # breakpoint()
         input_obs = self.process_obs(input_obs)
         if self.control_mode == 'receeding_temporal':
             return torch.from_numpy(self.act_receeding_temporal(input_obs))
@@ -231,7 +230,6 @@ class OGB1KPolicyWrapper():
 
         # # temporal emsemble start
         elif self.control_mode == 'temporal_ensemble':
-            # breakpoint()
             new_actions = deque(target_joint_positions)
             self.action_queue.append(new_actions)
             actions_current_timestep = np.empty((len(self.action_queue), target_joint_positions.shape[1]))
@@ -241,7 +239,6 @@ class OGB1KPolicyWrapper():
 
             exp_weights = np.exp(self.exp_k_value * np.arange(actions_current_timestep.shape[0]))
             exp_weights = exp_weights / exp_weights.sum()
-            # breakpoint()
 
             final_action = (actions_current_timestep * exp_weights[:, None]).sum(axis=0)
             final_action[-9] = target_joint_positions[0, -9]
